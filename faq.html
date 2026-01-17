@@ -1,35 +1,88 @@
 <!DOCTYPE html>
 <html lang="it">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="UniBoQuest: missioni gamificate per studenti del campus.">
-        <title>UniBoQuest - FAQ</title>
-    </head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Domande frequenti su UniBoQuest: missioni, check-in, XP, badge e accessibilità.">
+    <title>UniBoQuest - FAQ</title>
+  </head>
 
-    <body>
+  <body>
+    <a href="#contenuto">Salta al contenuto principale</a>
 
-        <a href="#contenuto">Salta al contenuto principale</a>
+    <header>
+      <h1>UniBoQuest</h1>
 
-        <header>
-            <h1>UniBoQuest</h1>
+      <nav aria-label="Navigazione principale">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="gioco.html">Come funziona</a></li>
+          <li><a href="faq.html" aria-current="page">FAQ</a></li>
+        </ul>
+      </nav>
+    </header>
 
-            <nav aria-label="Navigazione principale">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="gioco.html">Come funziona</a></li>
-                <li><a href="faq.html" aria-current="page">FAQ</a></li>
-            </ul>
-            </nav>
-        </header>
+    <main id="contenuto">
+      <h2>Domande frequenti</h2>
 
-        <main id="contenuto">
-            
-        </main>
+      <section>
+        <h3>Cos’è UniBoQuest?</h3>
+        <p>
+          È un servizio gamificato per studenti: propone missioni legate al campus (eventi, workshop, attività utili),
+          e premia la partecipazione con XP e badge.
+        </p>
+      </section>
 
-        <footer>
-            <p>&copy; 2025 UniBoQuest — Prototipo didattico.</p>
-        </footer>
+      <section>
+        <h3>Serve un account per usare UniBoQuest?</h3>
+        <p>
+          Puoi leggere le pagine informative anche senza account. Per salvare progressi, XP e badge serve registrarsi.
+          <a href="registrazione.php">Registrati</a> oppure <a href="login.php">Accedi</a>.
+        </p>
+      </section>
 
-    </body>
+      <section>
+        <h3>Come scelgo una missione?</h3>
+        <p>
+          Dalla dashboard (dopo il login) potrai vedere le missioni disponibili e i dettagli: descrizione, luogo e ricompensa.
+        </p>
+      </section>
+
+      <section>
+        <h3>Come funziona il check-in?</h3>
+        <p>
+          Durante l’attività viene mostrato un QR. Dopo aver effettuato l’accesso, lo scannerizzi per confermare la presenza.
+          Se non puoi scansionare, sarà disponibile un’alternativa tramite codice testuale (fallback).
+        </p>
+      </section>
+
+      <section>
+        <h3>Cosa sono XP, livelli e badge?</h3>
+        <p>
+          Gli XP (punti esperienza) aumentano completando missioni. Con gli XP puoi salire di livello.
+          I badge sono riconoscimenti legati a traguardi o missioni specifiche.
+        </p>
+      </section>
+
+      <section>
+        <h3>I miei dati sono pubblici?</h3>
+        <p>
+          In generale, il tuo profilo mostra solo informazioni essenziali (es. nickname e progressi).
+          Dati sensibili (email, ecc.) non vengono mostrati agli altri utenti.
+        </p>
+      </section>
+
+      <section>
+        <h3>Chi inserisce o modifica le missioni?</h3>
+        <p>
+          Le missioni vengono gestite da un amministratore (utente admin) tramite un pannello con operazioni di creazione,
+          modifica ed eliminazione (CRUD).
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 UniBoQuest — Prototipo didattico.</p>
+    </footer>
+  </body>
 </html>
