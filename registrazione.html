@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Registrati a UniBoQuest" />
+
+        <link rel="stylesheet" href="css/style.css" />
+
+        <title>UniBoQuest - Registrazione</title>
+    </head>
+
+    <body>
+
+        <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
+
+        <header>
+            <h1>UniBoQuest</h1>
+
+            <nav aria-label="Navigazione principale">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="gioco.html">Come funziona</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="registrazione.html" aria-current="page">Registrati</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="contenuto">
+            <h2>Registrati</h2>
+
+            <form action="#" method="post">
+                <p>
+                    <label for="nickname">Nickname:</label>
+                    <input type="text" id="nickname" name="nickname" required="required" /> 
+                </p>
+
+                <p>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required="required" />
+                </p>
+
+                <p>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required="required" />
+                </p>
+
+                <p>
+                    <label for="password2">Conferma password:</label>
+                    <input type="password" id="password2" name="password2" required="required" />
+                </p>
+
+                <p>
+                    <button type="submit">Crea account</button>
+                </p>
+            </form>
+
+            <p>
+                Hai già un account? <a href="login.html">Accedi</a>
+            </p>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 UniBoQuest — Prototipo didattico.</p>
+        </footer>
+    </body>
+</html>
