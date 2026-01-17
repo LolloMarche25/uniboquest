@@ -54,6 +54,24 @@ main section {
   margin-bottom: 24px;
 }
 
+label {
+  font-weight: 600;
+}
+
+input, button {
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  max-width: 420px;
+  padding: 8px;
+}
+
+button {
+  padding: 8px 12px;
+}
+
 footer {
   border-top: 1px solid #ddd;
   color: #333;
