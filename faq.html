@@ -11,21 +11,35 @@
     </head>
 
     <body>
-        <a href="#contenuto">Salta al contenuto principale</a>
+        <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
 
-        <header>
-            <h1>UniBoQuest</h1>
+        <header class="border-bottom">
+            <nav class="navbar navbar-expand-md navbar-light bg-light">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" href="index.html">UniBoQuest</a>
 
-            <nav aria-label="Navigazione principale">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="gioco.html">Come funziona</a></li>
-                    <li><a href="faq.html" aria-current="page">FAQ</a></li>
-                </ul>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+                        aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="nav">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="gioco.html">Come funziona</a></li>
+                            <li class="nav-item"><a class="nav-link" href="faq.html" aria-current="page">FAQ</a></li>
+                        </ul>
+
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary" href="login.html">Accedi</a>
+                            <a class="btn btn-primary" href="registrazione.html">Registrati</a>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </header>
 
-        <main id="contenuto">
+        <main id="contenuto" class="container py-4">
             <h2>Domande frequenti</h2>
 
             <section>
@@ -84,8 +98,8 @@
             </section>
         </main>
 
-        <footer>
-            <p>&copy; 2025 UniBoQuest — Prototipo didattico.</p>
+        <footer class="container py-4 border-top">
+            <p class="mb-0">&copy; 2025 UniBoQuest — Prototipo didattico.</p>
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
