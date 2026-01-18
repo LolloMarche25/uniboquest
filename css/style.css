@@ -423,16 +423,30 @@ footer {
 .page-num { position: absolute; bottom: 30px; right: 40px; font-family: 'Press Start 2P'; font-size: 0.8rem; color: #000; }
 
 .book {
-    width: 650px;
-    height: 800px;
+    width: 621px;
+    height: 915px;
     position: relative;
     transform-style: preserve-3d;
-    transform: translateX(325px); 
+    transform: translateX(310.5px);
     transition: transform 1s ease-in-out;
 }
 
 .book.closed {
     transform: translateX(0px);
+}
+
+.full-image-cover {
+    padding: 0 !important;
+    border: none !important;
+    background: #000;
+}
+
+.cover-art-full {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+    image-rendering: auto;
 }
 
 .back-cover-style {
@@ -472,4 +486,21 @@ footer {
     padding: 15px;
     font-family: 'Share Tech Mono';
     border-top: 1px solid rgba(255,255,255,0.2);
+}
+.full-image-cover {
+    padding: 0 !important;
+    border: none !important;
+    background: #000 !important;
+    overflow: hidden;
+}
+
+.cover-art-full {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    image-rendering: pixelated;
+}
+#p1 .front {
+    box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
 }
