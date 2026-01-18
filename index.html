@@ -42,16 +42,32 @@
         </header>
 
         <main id="contenuto" class="container py-4">
-            <section class="mb-4">
-                <h2 class="font-8bit">Missioni per il Campus</h2>
-                <p>
-                    UniBoQuest è un’app che trasforma la vita universitaria in un percorso a missioni:
-                    completa attività nel campus, guadagna XP e sblocca badge.
-                </p>
 
-                <p>
-                    Vuoi iniziare? <a href="registrazione.html"><strong>Registrati</strong></a> oppure <a href="login.html">Accedi</a>.
-                </p>
+            <section class="hero-ubq" aria-labelledby="hero-title">
+                <div class="hero-ubq-scene">
+                    <img src="img/hero-desk.png" alt="Scrivania vista in prima persona con un computer CRT." class="hero-ubq-img" />
+
+                    <div class="hero-ubq-copy">
+                        <h2 id="hero-title" class="hero-ubq-title font-8bit">UniBoQuest</h2>
+                        <p class="hero-ubq-subtitle">
+                            Missioni per il campus: completa attività, guadagna XP e sblocca badge.
+                        </p>
+                        <p class="hero-ubq-note">
+                            Entra nel gioco dal monitor.
+                        </p>
+                    </div>
+
+                    <div class="hero-ubq-monitor" role="group" aria-label="Accesso a UniBoQuest">
+                        <a class="btn-pixel-yellow hero-ubq-btn hero-ubq-btn-login" href="login.html" data-ubq-go="login.html">
+                            Accedi
+                        </a>
+                        <a class="btn-pixel hero-ubq-btn hero-ubq-btn-register" href="registrazione.html" data-ubq-go="registrazione.html">
+                            Registrati
+                        </a>
+                    </div>
+
+                    <div class="ubq-transition" aria-hidden="true"></div>
+                </div>
             </section>
 
             <section class="mb-4">
@@ -83,5 +99,6 @@
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/transition.js"></script>
     </body>
 </html>
