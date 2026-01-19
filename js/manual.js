@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (!flipped) {
           page.classList.add("flipped");
-          // Se apro la prima pagina, sposto il libro a destra per centrare l'apertura
           if (index === 0) book.classList.remove("closed");
           
           setTimeout(() => {
@@ -22,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 600);
         } else {
           page.classList.remove("flipped");
-          // Se chiudo la prima pagina, riporto il libro al centro
           if (index === 0) book.classList.add("closed");
           
           setTimeout(() => {
