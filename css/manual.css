@@ -5,9 +5,10 @@
 .manual-bg {
   background: radial-gradient(circle, #444 0%, #111 100%);
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* Titoli esterni */
+/* Titoli esterni alla pagina del libro */
 .manual-section h1.font-8bit {
   color: #ffea00;
   text-shadow: 2px 2px 0 rgba(0,0,0,.8);
@@ -17,38 +18,34 @@
 }
 
 /* ========================================================== */
-/* VIEWPORT E CENTRATURA (Desktop)                           */
+/* VIEWPORT E CENTRATURA (Desktop > 1024px)                  */
 /* ========================================================== */
 .book-viewport {
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 2000px;
   padding: 40px 0;
   width: 100%;
 }
 
 .book {
-  height: min(72vh, 915px);
-  aspect-ratio: 621 / 915;
   position: relative;
+  height: min(75vh, 850px);
+  aspect-ratio: 621 / 915;
   transform-style: preserve-3d;
   transform: translateX(50%); 
   transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-  will-change: transform;
 }
 
 .book.closed {
   transform: translateX(0) !important;
 }
 
-/* ========================================================== */
-/* LOGICA PAGINE (3D Desktop)                                */
-/* ========================================================== */
+/* PAGINE (Desktop) */
 .page {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   transform-origin: left;
   transform-style: preserve-3d;
   transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -60,16 +57,15 @@
 
 .front, .back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   background: #e8e8e8;
   border: 10px solid #000;
-  padding: 30px;
+  padding: 25px;
   box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .back {
@@ -77,179 +73,131 @@
   background-color: #dcdcdc;
 }
 
-/* ========================================================== */
-/* NUMERI DI PAGINA (Ancorati in basso)                      */
-/* ========================================================== */
+/* NUMERI DI PAGINA */
 .page-num {
   position: absolute;
   bottom: 20px;
   right: 25px;
   font-family: "Press Start 2P", monospace;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #000;
-  pointer-events: none;
+}
+.back .page-num { right: auto; left: 25px; }
+
+/* ========================================================== */
+/* TIPOGRAFIA INTERNA (Rimpicciolita e protetta)            */
+/* ========================================================== */
+
+.section-hdr {
+  font-family: "Press Start 2P";
+  font-size: 0.9rem;
+  background: #ffea00;
+  color: #000 !important;
+  padding: 5px 10px;
+  margin-bottom: 12px;
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  line-height: 1.4;
 }
 
-.back .page-num {
-  right: auto;
-  left: 25px;
+.page-inner p {
+  font-family: "Share Tech Mono";
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #111;
+  margin-bottom: 10px;
 }
 
 /* ========================================================== */
-/* RETRO COPERTINA (Back Cover)                              */
+/* RETRO COPERTINA                                           */
 /* ========================================================== */
 .back-cover-style {
   background: #1a1a1a !important;
   color: #fff !important;
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
   padding: 0 !important;
 }
-
 .cover-stripe {
-  height: 40px;
+  height: 35px;
   background: repeating-linear-gradient(45deg, #ffea00, #ffea00 10px, #000 10px, #000 20px);
 }
-
 .back-content {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px;
-  text-align: center;
+  padding: 20px;
 }
-
-.barcode-area {
-  background: #fff;
-  padding: 15px;
-  display: inline-block;
-  margin-bottom: 20px;
-  border: 2px solid #333;
-}
-
-.barcode {
-  width: 180px;
-  height: 80px;
-  background: repeating-linear-gradient(90deg, #000, #000 3px, #fff 3px, #fff 7px);
-}
-
-.barcode-num {
-  color: #000 !important;
-  font-family: "Share Tech Mono", monospace;
-  font-size: 0.9rem;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.manual-back-note {
-  color: #aaa;
-  font-family: "Share Tech Mono";
-  max-width: 80%;
-  margin-top: 20px;
-}
-
-.cover-footer-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 30px;
-  font-family: "Share Tech Mono";
-  border-top: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.8rem;
-  background: #000;
-}
+.barcode-area { background: #fff; padding: 10px; border: 2px solid #333; margin-bottom: 10px; }
+.barcode { width: 140px; height: 50px; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 5px); }
+.barcode-num { color: #000 !important; font-family: "Share Tech Mono"; font-size: 0.75rem; margin-top: 5px; }
+.cover-footer-bar { background: #000; padding: 15px; font-size: 0.75rem; border-top: 1px solid #333; }
 
 /* ========================================================== */
-/* COPERTINE E TIPOGRAFIA INTERNA                            */
+/* COPERTINE                                                 */
 /* ========================================================== */
 .full-image-cover { padding: 0 !important; border: none !important; }
-.cover-art-full { width: 100%; height: 100%; object-fit: cover; display: block; image-rendering: pixelated; }
-
-.section-hdr {
-  font-family: "Press Start 2P";
-  font-size: 1.1rem;
-  padding: 5px 15px;
-  margin-bottom: 10px;
-  display: inline-block;
-  background: #ffea00;
-  color: #000 !important;
-}
-
-.page-inner p {
-  font-family: "Share Tech Mono";
-  font-size: 1.15rem;
-  line-height: 1.35;
-  color: #111;
-}
+.cover-art-full { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
 
 /* ========================================================== */
-/* RESPONSIVE / MOBILE LAYOUT   */
+/* RESPONSIVE LAYOUT (iPad, Tablet e Smartphone < 1024px)    */
 /* ========================================================== */
 
-@media (max-width: 767.98px) {
+@media (max-width: 1024px) {
   .book-viewport {
-    padding: 10px 0;
-    overflow: hidden;
+    display: block;
+    padding: 20px 10px;
   }
 
   .book {
-    transform: none !important; 
-    width: 95vw !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 500px; 
     height: auto !important;
-    min-height: 500px;
-    aspect-ratio: auto; 
-    perspective: none;
     margin: 0 auto;
+    aspect-ratio: auto !important;
   }
 
   .page.manual-mobile {
-    position: relative; 
-    transform: none !important;
+    position: relative !important;
     display: none; 
-    width: 100%;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
   }
 
   .page.manual-mobile[data-active="true"] {
-    display: block; 
+    display: block !important;
   }
 
   .front, .back {
-    position: relative; 
+    position: relative !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 500px;
+    min-height: 400px;
     transform: none !important;
-    backface-visibility: visible;
-    box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
-    padding: 25px;
-    border-width: 6px;
-    left: 0 !important;
-    top: 0 !important;
+    backface-visibility: visible !important;
+    display: block !important;
+    padding: 20px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+    border-width: 8px;
   }
 
-  .page.manual-mobile[data-face="0"] .back {
-    display: none !important;
-  }
+  .page.manual-mobile[data-face="0"] .back { display: none !important; }
+  .page.manual-mobile[data-face="1"] .front { display: none !important; }
 
-  .page.manual-mobile[data-face="1"] .front {
-    display: none !important;
-  }
-
-  .page.manual-mobile[data-face="1"] .back {
-    display: flex !important;
+  .section-hdr {
+    font-size: 0.85rem;
   }
 
   .page-num {
-    bottom: 15px;
-    right: 15px;
-    left: auto !important;
-    font-size: 0.6rem;
-  }
-
-  .cover-art-full {
-    height: auto;
-    max-height: 500px;
+    position: relative !important;
+    bottom: auto; right: auto;
+    display: block;
+    text-align: right;
+    margin-top: 15px;
+    font-size: 0.65rem;
   }
 }
