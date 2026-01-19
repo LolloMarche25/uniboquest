@@ -64,11 +64,34 @@
   border: 10px solid #000;
   padding: 30px;
   box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
+  
+  /* FIX: Necessario per il posizionamento dei numeri di pagina */
+  display: flex;
+  flex-direction: column;
 }
 
 .back {
   transform: rotateY(180deg);
   background-color: #dcdcdc;
+}
+
+/* ========================================================== */
+/* FIX NUMERI DI PAGINA                                      */
+/* ========================================================== */
+.page-num {
+  position: absolute;
+  bottom: 20px;
+  right: 25px; /* Default a destra per le pagine front (dispari) */
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.75rem;
+  color: #000;
+  pointer-events: none;
+}
+
+/* Specularità: Numero a sinistra nelle pagine back (pari) */
+.back .page-num {
+  right: auto;
+  left: 25px;
 }
 
 /* ========================================================== */
@@ -79,8 +102,8 @@
   color: #fff !important;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribuisce i contenuti su tutta l'altezza */
-  padding: 0 !important; /* Gestiamo il padding internamente */
+  justify-content: space-between;
+  padding: 0 !important;
 }
 
 .cover-stripe {
@@ -92,13 +115,12 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centra verticalmente il contenuto centrale */
+  justify-content: center;
   align-items: center;
   padding: 40px;
   text-align: center;
 }
 
-/* Fix Barcode e scritta invisibile */
 .barcode-area {
   background: #fff;
   padding: 15px;
@@ -114,7 +136,7 @@
 }
 
 .barcode-num {
-  color: #000 !important; /* Forza il nero sulla scritta ALMA MATER */
+  color: #000 !important;
   font-family: "Share Tech Mono", monospace;
   font-size: 0.9rem;
   margin-top: 10px;
@@ -128,7 +150,6 @@
   margin-top: 20px;
 }
 
-/* Footer del libro */
 .cover-footer-bar {
   display: flex;
   justify-content: space-between;
@@ -168,4 +189,8 @@
   .page.manual-mobile[data-active="false"] { display: none; }
   .page.manual-mobile[data-face="0"] .back { display: none; }
   .page.manual-mobile[data-face="1"] .front { display: none; }
+  
+  /* Nascondi numeri pagina su mobile se preferisci un look più pulito, 
+     o lasciali commentando la riga sotto */
+  .page-num { bottom: 10px; font-size: 0.6rem; }
 }
