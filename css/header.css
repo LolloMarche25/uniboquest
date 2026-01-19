@@ -1,0 +1,57 @@
+/* =========================
+   HEADER / NAVBAR (glass)
+   ========================= */
+.header-glass {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+
+  backdrop-filter: blur(10px);
+  background: linear-gradient(
+    90deg,
+    rgba(80, 12, 10, 0.96),
+    rgba(120, 18, 15, 0.96)
+  );
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 10px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.header-glass .navbar-brand,
+.header-glass .nav-link {
+  color: #ffffff !important;
+}
+
+.header-glass .nav-link:hover,
+.header-glass .nav-link:focus-visible,
+.header-glass .nav-link[aria-current="page"] {
+  color: var(--ubq-gold) !important;
+}
+
+.header-glass .navbar-nav .nav-link {
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+}
+
+.header-glass .nav-link[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.header-glass .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.header-glass .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.header-glass a:focus-visible {
+  outline: 3px solid var(--ubq-gold);
+  outline-offset: 3px;
+}
+
+.ubq-nav-right {
+  flex-wrap: nowrap;
+}

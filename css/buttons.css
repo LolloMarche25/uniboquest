@@ -1,0 +1,46 @@
+/* =========================
+   BUTTONS (pixel)
+   ========================= */
+.btn-pixel,
+.btn-pixel-yellow {
+  display: inline-block;
+  text-decoration: none !important;
+  font-family: "Press Start 2P", monospace !important;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: transform 120ms;
+}
+
+.btn-pixel:focus-visible,
+.btn-pixel-yellow:focus-visible {
+  outline: 3px solid var(--ubq-gold);
+  outline-offset: 3px;
+}
+
+.btn-pixel {
+  background-color: var(--ubq-red);
+  color: #fff !important;
+  border: 3px solid #4a0806;
+  box-shadow: 4px 4px 0px #4a0806;
+}
+
+.btn-pixel-yellow {
+  background-color: var(--ubq-gold);
+  color: #4a0806 !important;
+  border: 3px solid #a88e30;
+  box-shadow: 4px 4px 0px #a88e30;
+}
+
+.btn-pixel:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px #4a0806;
+}
+
+.btn-pixel-yellow:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px #a88e30;
+}

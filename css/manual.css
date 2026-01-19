@@ -1,0 +1,171 @@
+/* ========================================================== */
+/* PAGINA: IL GIOCO (MANUALE) – manual.css                   */
+/* ========================================================== */
+
+.manual-bg {
+  background: radial-gradient(circle, #444 0%, #111 100%);
+  overflow-x: hidden;
+}
+
+/* Titoli esterni */
+.manual-section h1.font-8bit {
+  color: #ffea00;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.8);
+}
+.manual-section .manual-intro {
+  color: rgba(255,255,255,.85) !important;
+}
+
+/* VIEWPORT E CENTRATURA */
+.book-viewport {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 2000px;
+  padding: 40px 0;
+  width: 100%;
+}
+
+.book {
+  height: min(72vh, 915px);
+  aspect-ratio: 621 / 915;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateX(50%); 
+  transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  will-change: transform;
+}
+
+.book.closed {
+  transform: translateX(0) !important;
+}
+
+/* PAGINE */
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.page.flipped {
+  transform: rotateY(-180deg);
+}
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #e8e8e8;
+  border: 10px solid #000;
+  padding: 30px;
+  box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
+}
+
+.back {
+  transform: rotateY(180deg);
+  background-color: #dcdcdc;
+}
+
+/* ========================================================== */
+/* FIX RETRO COPERTINA (BACK COVER)                          */
+/* ========================================================== */
+.back-cover-style {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribuisce i contenuti su tutta l'altezza */
+  padding: 0 !important; /* Gestiamo il padding internamente */
+}
+
+.cover-stripe {
+  height: 40px;
+  background: repeating-linear-gradient(45deg, #ffea00, #ffea00 10px, #000 10px, #000 20px);
+}
+
+.back-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente il contenuto centrale */
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+/* Fix Barcode e scritta invisibile */
+.barcode-area {
+  background: #fff;
+  padding: 15px;
+  display: inline-block;
+  margin-bottom: 20px;
+  border: 2px solid #333;
+}
+
+.barcode {
+  width: 180px;
+  height: 80px;
+  background: repeating-linear-gradient(90deg, #000, #000 3px, #fff 3px, #fff 7px);
+}
+
+.barcode-num {
+  color: #000 !important; /* Forza il nero sulla scritta ALMA MATER */
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.manual-back-note {
+  color: #aaa;
+  font-family: "Share Tech Mono";
+  max-width: 80%;
+  margin-top: 20px;
+}
+
+/* Footer del libro */
+.cover-footer-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  font-family: "Share Tech Mono";
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.8rem;
+  background: #000;
+}
+
+/* COPERTINA FRONTALE */
+.full-image-cover { padding: 0 !important; border: none !important; }
+.cover-art-full { width: 100%; height: 100%; object-fit: cover; display: block; image-rendering: pixelated; }
+
+/* TIPOGRAFIA */
+.section-hdr {
+  font-family: "Press Start 2P";
+  font-size: 1.1rem;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+  display: inline-block;
+  background: #ffea00;
+  color: #000 !important;
+}
+
+.page-inner p {
+  font-family: "Share Tech Mono";
+  font-size: 1.15rem;
+  line-height: 1.35;
+  color: #111;
+}
+
+/* MOBILE */
+@media (max-width: 767.98px) {
+  .book { transform: none !important; width: 92vw !important; }
+  .page.manual-mobile { position: relative; transform: none !important; transform-style: flat !important; }
+  .page.manual-mobile[data-active="false"] { display: none; }
+  .page.manual-mobile[data-face="0"] .back { display: none; }
+  .page.manual-mobile[data-face="1"] .front { display: none; }
+}
