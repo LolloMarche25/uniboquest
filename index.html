@@ -16,39 +16,53 @@
         <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
 
         <header class="header-glass">
-            <nav class="navbar navbar-expand-md navbar-dark">
-                <div class="container">
-                    <a class="navbar-brand fw-bold font-8bit" href="index.html">UniBoQuest</a>
+        <nav class="navbar navbar-expand-md navbar-dark">
+            <div class="container-fluid">
 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
-                        aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+            <a class="navbar-brand font-8bit" href="index.html">UniBoQuest</a>
 
-                    <div class="collapse navbar-collapse" id="nav">
-                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                            <li class="nav-item"><a class="nav-link" href="index.html" aria-current="page">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" href="gioco.html">Come funziona</a></li>
-                            <li class="nav-item"><a class="nav-link" href="faq.html">FAQ</a></li>
-                        </ul>
+            <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#nav"
+                aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                        <div class="d-flex gap-2">
-                            <a class="btn-pixel-yellow" href="login.html">Accedi</a>
-                            <a class="btn-pixel" href="registrazione.html">Registrati</a>
-                        </div>
-                    </div>
+            <div class="collapse navbar-collapse" id="nav">
+
+                <ul class="navbar-nav mx-auto mb-2 mb-md-0 ubq-nav-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html" aria-current="page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="gioco.html">Il Gioco</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="faq.html">FAQ</a>
+                </li>
+                </ul>
+
+                <div class="d-flex gap-2 ms-md-0 ubq-nav-right">
+                <a class="btn-pixel-yellow" href="login.html">Accedi</a>
+                <a class="btn-pixel" href="registrazione.html">Registrati</a>
                 </div>
-            </nav>
+
+            </div>
+            </div>
+        </nav>
         </header>
 
+
         <main id="contenuto" class="container py-4">
-
             <section class="hero-ubq" aria-labelledby="hero-title">
+                
                 <div class="hero-ubq-scene">
-                    <img src="img/hero-desk.png" alt="Scrivania vista in prima persona con un computer CRT." class="hero-ubq-img" />
+                    <picture>
+                        <source media="(max-width: 767.98px)" srcset="img/hero-monitor-mobile.jpeg" />
+                        <img src="img/hero-desk.png" alt="Scrivania illustrata con computer CRT e oggetti da studio." class="hero-ubq-img" />
+                    </picture>
 
-                    <div class="hero-ubq-copy">
-                        <h2 id="hero-title" class="hero-ubq-title font-8bit">UniBoQuest</h2>
+                    <div class="hero-ubq-copy d-none d-md-block">
+                        <h1 id="hero-title" class="hero-ubq-title font-8bit">UniBoQuest</h1>
                         <p class="hero-ubq-subtitle">
                             Missioni per il campus: completa attività, guadagna XP e sblocca badge.
                         </p>
@@ -58,39 +72,17 @@
                     </div>
 
                     <div class="hero-ubq-monitor" role="group" aria-label="Accesso a UniBoQuest">
-                        <a class="btn-pixel-yellow hero-ubq-btn hero-ubq-btn-login" href="login.html" data-ubq-go="login.html">
-                            Accedi
-                        </a>
-                        <a class="btn-pixel hero-ubq-btn hero-ubq-btn-register" href="registrazione.html" data-ubq-go="registrazione.html">
-                            Registrati
-                        </a>
+                        <div class="hero-ubq-copy-inmonitor d-md-none">
+                            <div class="font-8bit hero-ubq-title-inmonitor">UniBoQuest</div>
+                            <div class="hero-ubq-subtitle-inmonitor">
+                                Missioni per il campus: XP, badge e attività.
+                            </div>
+                        </div>
+
+                        <a class="btn-pixel-yellow hero-ubq-btn" href="login.html">Accedi</a>
+                        <a class="btn-pixel hero-ubq-btn" href="registrazione.html">Registrati</a>
                     </div>
-
-                    <div class="ubq-transition" aria-hidden="true"></div>
                 </div>
-            </section>
-
-            <section class="mb-4">
-                <h2 class="font-8bit">Come funziona</h2>
-                <ol>
-                    <li>Scegli una missione adatta ai tuoi obiettivi.</li>
-                    <li>Partecipa all’attività e conferma la presenza (QR o codice).</li>
-                    <li>Ottieni XP, badge e segui i progressi nel tuo profilo.</li>
-                </ol>
-
-                <p>
-                    Leggi le regole complete nella pagina <a href="gioco.html">Come funziona</a>.
-                </p>
-            </section>
-
-            <section>
-                <h2 class="font-8bit">Esempio di missione</h2>
-                <p><strong>Partecipa al workshop CV</strong></p>
-                <ul>
-                    <li>Check-in con QR</li>
-                    <li>Ricompensa: 50 XP</li>
-                    <li>Badge: “Career Starter”</li>
-                </ul>
             </section>
         </main>
 
@@ -99,6 +91,5 @@
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="js/transition.js"></script>
     </body>
 </html>
