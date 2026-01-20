@@ -1,0 +1,73 @@
+/* ========================================================== */
+/* STILE PER LOGIN E REGISTRAZIONE      */
+/* ========================================================== */
+
+body.auth-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body.auth-page main {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.auth-card {
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid rgba(255, 234, 0, 0.3);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.auth-page .form-label {
+    font-family: 'Share Tech Mono', monospace;
+    color: #ffea00;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.auth-page .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff !important;
+    font-family: 'Share Tech Mono', monospace;
+    border-radius: 0;
+}
+
+.auth-page .form-control:focus {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: #ffea00;
+    box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.2);
+    outline: none;
+}
+
+.auth-page .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-footer-link {
+    color: #ffffff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.auth-footer-link a {
+    color: #ffea00;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.auth-footer-link a:hover {
+    border-bottom-color: #ffea00;
+}
