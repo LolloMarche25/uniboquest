@@ -1,0 +1,59 @@
+/* ========================================================== */
+/* PAGINA FAQ                          */
+/* ========================================================== */
+
+body.faq-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body.faq-page main {
+    flex: 1 0 auto;
+}
+
+.faq-page .accordion-item {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    margin-bottom: 8px;
+}
+
+.faq-page .accordion-button {
+    background-color: transparent !important;
+    color: #ffffff !important;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.15rem;
+    padding: 1.25rem 1rem;
+    border: none;
+}
+
+.faq-page .accordion-button:not(.collapsed) {
+    color: #ffea00 !important; /* Giallo UniBoQuest */
+    box-shadow: none !important;
+    background-color: rgba(255, 234, 0, 0.05) !important;
+}
+
+.faq-page .accordion-button::after {
+    filter: invert(1);
+}
+
+.faq-page .accordion-body {
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.faq-page .faq-highlight {
+    color: #ffea00;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.faq-page .faq-highlight:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
