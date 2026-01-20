@@ -2,7 +2,13 @@
 declare(strict_types=1);
 
 session_start();
-require __DIR__ . '/config/db.php'; // <-- deve creare $mysqli
+
+if (!empty($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+require __DIR__ . '/config/db.php';
 
 $errors = [];
 $email = '';
@@ -32,8 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = (int)$user['id'];
             $_SESSION['user_email'] = (string)$user['email'];
 
-            header('Location: dashboard.php');
+            // Se profilo non esiste -> onboarding, altrimenti dashboard
+            $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE user_id = ? LIMIT 1");
+            $userId = (int)$user['id'];
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $hasProfile = (bool)$stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            header('Location: ' . ($hasProfile ? 'dashboard.php' : 'edit_profile.php'));
             exit;
+
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/profile_guard.php';
 
 $displayName = $_SESSION['user_email'] ?? 'Player';
 ?>

@@ -1,3 +1,128 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/config/db.php';
+
+$userId = (int)$_SESSION['user_id'];
+
+$errors = [];
+$success = false;
+
+// valori default (per “re-render” se ci sono errori)
+$data = [
+  'nickname' => '',
+  'display_name' => '',
+  'course' => '',
+  'year_label' => '',
+  'campus' => '',
+  'bio' => '',
+  'pref_events' => 0,
+  'pref_study' => 0,
+  'pref_sport' => 0,
+  'pref_social' => 0,
+  'avatar' => 'sprinter',
+  'privacy_public' => 0,
+];
+
+// Se profilo già esiste, pre-carica (utile quando aggiungerai value="" agli input)
+$stmt = $mysqli->prepare("SELECT * FROM profiles WHERE user_id = ? LIMIT 1");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($row = $res->fetch_assoc()) {
+    // merge senza rompere i default
+    foreach ($data as $k => $v) {
+        if (array_key_exists($k, $row)) $data[$k] = $row[$k] ?? $v;
+    }
+}
+$stmt->close();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Leggi input
+    $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
+    $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
+    $data['course'] = trim((string)($_POST['course'] ?? ''));
+    $data['year_label'] = trim((string)($_POST['year'] ?? ''));     // name="year" nel form
+    $data['campus'] = trim((string)($_POST['campus'] ?? ''));
+    $data['bio'] = trim((string)($_POST['bio'] ?? ''));
+    $data['avatar'] = trim((string)($_POST['avatar'] ?? 'sprinter'));
+
+    $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
+    $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
+    $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
+    $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
+    $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
+
+    // Validazioni minime
+    if ($data['nickname'] === '' || strlen($data['nickname']) < 3) {
+        $errors[] = "Nickname obbligatorio (min 3 caratteri).";
+    }
+    if (strlen($data['nickname']) > 32) {
+        $errors[] = "Nickname troppo lungo (max 32).";
+    }
+    if (strlen($data['bio']) > 255) {
+        $errors[] = "Bio troppo lunga (max 255).";
+    }
+
+    // (Opzionale ma consigliato) nickname unico
+    if (!$errors) {
+        $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
+        $stmt->bind_param("si", $data['nickname'], $userId);
+        $stmt->execute();
+        $dup = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        if ($dup) $errors[] = "Nickname già in uso. Scegline un altro.";
+    }
+
+    if (!$errors) {
+        $sql = "INSERT INTO profiles
+            (user_id, nickname, display_name, course, year_label, campus, bio,
+             pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+              nickname=VALUES(nickname),
+              display_name=VALUES(display_name),
+              course=VALUES(course),
+              year_label=VALUES(year_label),
+              campus=VALUES(campus),
+              bio=VALUES(bio),
+              pref_events=VALUES(pref_events),
+              pref_study=VALUES(pref_study),
+              pref_sport=VALUES(pref_sport),
+              pref_social=VALUES(pref_social),
+              avatar=VALUES(avatar),
+              privacy_public=VALUES(privacy_public)";
+
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param(
+            "issssssiiiiisi",
+            $userId,
+            $data['nickname'],
+            $data['display_name'],
+            $data['course'],
+            $data['year_label'],
+            $data['campus'],
+            $data['bio'],
+            $data['pref_events'],
+            $data['pref_study'],
+            $data['pref_sport'],
+            $data['pref_social'],
+            $data['avatar'],
+            $data['privacy_public']
+        );
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            header("Location: dashboard.php");
+            exit;
+        }
+
+        $stmt->close();
+        $errors[] = "Errore nel salvataggio profilo. Riprova.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="it">
     <head>
@@ -20,16 +145,15 @@
         <header class="header-glass">
             <nav class="navbar navbar-expand-md navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand font-8bit" href="index.html" aria-label="UniBoQuest Home">UniBoQuest</a>
+                    <a class="navbar-brand font-8bit" href="dashboard.php" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
 
                     <!-- Titolo onboarding (sempre visibile) -->
                     <div class="mx-auto d-none d-md-block">
                         <span class="font-8bit text-white" style="font-size: 0.9rem; opacity: 0.95;">
-                        COMPLETA IL TUO PROFILO
+                            COMPLETA IL TUO PROFILO
                         </span>
                     </div>
 
-                    <!-- Mobile: titolo sotto (per non spezzare layout) -->
                     <button
                         class="navbar-toggler"
                         type="button"
@@ -53,7 +177,6 @@
             </nav>
         </header>
 
-
         <main id="contenuto" class="container">
             <div class="profile-card">
                 <div class="profile-header">
@@ -65,7 +188,7 @@
                     Ultimo passo: scegli come comparirai in UniBoQuest. (Pagina statica, poi la colleghiamo al PHP)
                 </p>
 
-                <form action="#" method="get" id="profileForm">
+                <form action="edit_profile.php" method="post" id="profileForm">
                     <section class="profile-section">
                         <h3 class="profile-section-title">DATI BASE</h3>
 
@@ -73,15 +196,15 @@
                             <div class="col-12 col-md-6">
                                 <label for="nickname" class="form-label">Nickname *</label>
                                 <input
-                                type="text"
-                                id="nickname"
-                                name="nickname"
-                                class="form-control p-3"
-                                placeholder="Username pubblico"
-                                required
-                                minlength="3";
-                                pattern=".*\S.*"
-                                autocomplete="nickname"
+                                    type="text"
+                                    id="nickname"
+                                    name="nickname"
+                                    class="form-control p-3"
+                                    placeholder="Username pubblico"
+                                    required
+                                    minlength="3"
+                                    pattern=".*\S.*"
+                                    autocomplete="nickname"
                                 />
                                 <div class="form-text">Questo sarà visibile agli altri (se attivi la visibilità profilo).</div>
                             </div>
@@ -89,12 +212,12 @@
                             <div class="col-12 col-md-6">
                                 <label for="display_name" class="form-label">Nome visualizzato</label>
                                 <input
-                                type="text"
-                                id="display_name"
-                                name="display_name"
-                                class="form-control p-3"
-                                placeholder="Es. Lorenzo M."
-                                autocomplete="name"
+                                    type="text"
+                                    id="display_name"
+                                    name="display_name"
+                                    class="form-control p-3"
+                                    placeholder="Es. Lorenzo M."
+                                    autocomplete="name"
                                 />
                                 <div class="form-text">Se lo lasci vuoto, useremo il nickname.</div>
                             </div>
@@ -147,11 +270,11 @@
                             <div class="col-12">
                                 <label for="bio" class="form-label">Bio (breve)</label>
                                 <textarea
-                                id="bio"
-                                name="bio"
-                                class="form-control p-3"
-                                rows="3"
-                                placeholder="Es. 'Cacciatore di XP tra una lezione e l'altra'"
+                                    id="bio"
+                                    name="bio"
+                                    class="form-control p-3"
+                                    rows="3"
+                                    placeholder="Es. 'Cacciatore di XP tra una lezione e l'altra'"
                                 ></textarea>
                             </div>
                         </div>
@@ -267,11 +390,7 @@
                         <div class="footer-social d-flex gap-3">
                             <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                             <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
-                            <a
-                                href="https://github.com/LolloMarche25/uniboquest.git"
-                                class="text-white fs-5"
-                                aria-label="GitHub"
-                            ><i class="bi bi-github"></i></a>
+                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
                         </div>
                     </div>
                 </div>
