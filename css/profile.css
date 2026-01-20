@@ -1,0 +1,217 @@
+/* ========================================================== */
+/* STILE PROFILO (edit_profile / profilo) - coerente con AUTH  */
+/* ========================================================== */
+
+/* Layout pagina profilo: stessa logica di auth-page */
+body.profile-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body.profile-page main {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Card principale come auth-card */
+.profile-card {
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 2px solid rgba(255, 234, 0, 0.3);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 820px; /* più larga della auth-card perché ha sezioni e griglie */
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Titolo e hint coerenti */
+.profile-title {
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.profile-hint {
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+/* Header con step badge */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-step-badge {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 234, 0, 0.35);
+  color: #ffea00;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Sezioni interne: pannelli simili a blocchi auth */
+.profile-section {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-section-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.95rem;
+  color: #ffffff;
+  margin-bottom: 0.9rem;
+}
+
+/* Label e input coerenti con auth-page */
+.profile-page .form-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: #ffea00;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.profile-page .form-control,
+.profile-page .form-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff !important;
+  font-family: 'Share Tech Mono', monospace;
+  border-radius: 0;
+}
+
+.profile-page .form-control:focus,
+.profile-page .form-select:focus {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: #ffea00;
+  box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.2);
+  outline: none;
+}
+
+.profile-page .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Checkbox coerenti */
+.profile-page .form-check-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-page .form-check-input {
+  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-page .form-check-input:checked {
+  background-color: #ffea00;
+  border-color: #ffea00;
+}
+
+.profile-page .form-check-input:focus {
+  box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.2);
+}
+
+/* Form text */
+.profile-page .form-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Avatar grid */
+.profile-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .profile-avatar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Card avatar (label cliccabile) */
+.profile-avatar-card {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: transform 0.08s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.profile-avatar-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 234, 0, 0.35);
+}
+
+/* Nascondo il radio, ma resta accessibile */
+.profile-avatar-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Swatch placeholder avatar */
+.profile-avatar-swatch {
+  height: 56px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(0, 0, 0, 0.35) 60%);
+  margin-bottom: 0.5rem;
+}
+
+/* Testo avatar */
+.profile-avatar-name {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+/* Stato selezionato: usando :has (supporto moderno) */
+.profile-avatar-card:has(input[type="radio"]:checked) {
+  border-color: #ffea00;
+  box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.12);
+}
+
+/* Fallback se vuoi aggiungere classe manuale via JS in futuro */
+.profile-avatar-card.is-selected {
+  border-color: #ffea00;
+  box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.12);
+}
+
+/* Footer azioni */
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+}
+
+/* Suggerimento: bottoni già definiti in buttons.css:
+   - .btn-pixel
+   - .btn-pixel-yellow
+*/
+.profile-actions .btn-pixel,
+.profile-actions .btn-pixel-yellow {
+  flex: 1 1 240px;
+}
