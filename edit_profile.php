@@ -1,0 +1,407 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/config/db.php';
+
+$userId = (int)$_SESSION['user_id'];
+
+$errors = [];
+$success = false;
+
+// valori default (per “re-render” se ci sono errori)
+$data = [
+  'nickname' => '',
+  'display_name' => '',
+  'course' => '',
+  'year_label' => '',
+  'campus' => '',
+  'bio' => '',
+  'pref_events' => 0,
+  'pref_study' => 0,
+  'pref_sport' => 0,
+  'pref_social' => 0,
+  'avatar' => 'sprinter',
+  'privacy_public' => 0,
+];
+
+// Se profilo già esiste, pre-carica (utile quando aggiungerai value="" agli input)
+$stmt = $mysqli->prepare("SELECT * FROM profiles WHERE user_id = ? LIMIT 1");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($row = $res->fetch_assoc()) {
+    // merge senza rompere i default
+    foreach ($data as $k => $v) {
+        if (array_key_exists($k, $row)) $data[$k] = $row[$k] ?? $v;
+    }
+}
+$stmt->close();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Leggi input
+    $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
+    $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
+    $data['course'] = trim((string)($_POST['course'] ?? ''));
+    $data['year_label'] = trim((string)($_POST['year'] ?? ''));     // name="year" nel form
+    $data['campus'] = trim((string)($_POST['campus'] ?? ''));
+    $data['bio'] = trim((string)($_POST['bio'] ?? ''));
+    $data['avatar'] = trim((string)($_POST['avatar'] ?? 'sprinter'));
+
+    $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
+    $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
+    $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
+    $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
+    $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
+
+    // Validazioni minime
+    if ($data['nickname'] === '' || strlen($data['nickname']) < 3) {
+        $errors[] = "Nickname obbligatorio (min 3 caratteri).";
+    }
+    if (strlen($data['nickname']) > 32) {
+        $errors[] = "Nickname troppo lungo (max 32).";
+    }
+    if (strlen($data['bio']) > 255) {
+        $errors[] = "Bio troppo lunga (max 255).";
+    }
+
+    // (Opzionale ma consigliato) nickname unico
+    if (!$errors) {
+        $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
+        $stmt->bind_param("si", $data['nickname'], $userId);
+        $stmt->execute();
+        $dup = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        if ($dup) $errors[] = "Nickname già in uso. Scegline un altro.";
+    }
+
+    if (!$errors) {
+        $sql = "INSERT INTO profiles
+            (user_id, nickname, display_name, course, year_label, campus, bio,
+             pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+              nickname=VALUES(nickname),
+              display_name=VALUES(display_name),
+              course=VALUES(course),
+              year_label=VALUES(year_label),
+              campus=VALUES(campus),
+              bio=VALUES(bio),
+              pref_events=VALUES(pref_events),
+              pref_study=VALUES(pref_study),
+              pref_sport=VALUES(pref_sport),
+              pref_social=VALUES(pref_social),
+              avatar=VALUES(avatar),
+              privacy_public=VALUES(privacy_public)";
+
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param(
+            "issssssiiiiisi",
+            $userId,
+            $data['nickname'],
+            $data['display_name'],
+            $data['course'],
+            $data['year_label'],
+            $data['campus'],
+            $data['bio'],
+            $data['pref_events'],
+            $data['pref_study'],
+            $data['pref_sport'],
+            $data['pref_social'],
+            $data['avatar'],
+            $data['privacy_public']
+        );
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            header("Location: dashboard.php");
+            exit;
+        }
+
+        $stmt->close();
+        $errors[] = "Errore nel salvataggio profilo. Riprova.";
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Completa il profilo UniBoQuest e inizia l'avventura." />
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+        <link rel="stylesheet" href="css/main.css" />
+
+        <title>UniBoQuest - Completa Profilo</title>
+    </head>
+
+    <body class="manual-bg profile-page">
+        <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
+
+        <header class="header-glass">
+            <nav class="navbar navbar-expand-md navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand font-8bit" href="dashboard.php" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
+
+                    <!-- Titolo onboarding (sempre visibile) -->
+                    <div class="mx-auto d-none d-md-block">
+                        <span class="font-8bit text-white" style="font-size: 0.9rem; opacity: 0.95;">
+                            COMPLETA IL TUO PROFILO
+                        </span>
+                    </div>
+
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#nav"
+                        aria-controls="nav"
+                        aria-expanded="false"
+                        aria-label="Apri menu"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="nav">
+                        <div class="d-md-none pt-3 pb-2 text-center">
+                            <span class="font-8bit text-white" style="font-size: 0.85rem; opacity: 0.95;">
+                                COMPLETA IL TUO PROFILO
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main id="contenuto" class="container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h2 class="profile-title font-8bit mb-0" style="font-size: 1.15rem;">PROFILO PLAYER</h2>
+                    <span class="profile-step-badge">STEP 2/2</span>
+                </div>
+
+                <p class="profile-hint">
+                    Ultimo passo: scegli come comparirai in UniBoQuest. (Pagina statica, poi la colleghiamo al PHP)
+                </p>
+
+                <form action="edit_profile.php" method="post" id="profileForm">
+                    <section class="profile-section">
+                        <h3 class="profile-section-title">DATI BASE</h3>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="nickname" class="form-label">Nickname *</label>
+                                <input
+                                    type="text"
+                                    id="nickname"
+                                    name="nickname"
+                                    class="form-control p-3"
+                                    placeholder="Username pubblico"
+                                    required
+                                    minlength="3"
+                                    pattern=".*\S.*"
+                                    autocomplete="nickname"
+                                />
+                                <div class="form-text">Questo sarà visibile agli altri (se attivi la visibilità profilo).</div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="display_name" class="form-label">Nome visualizzato</label>
+                                <input
+                                    type="text"
+                                    id="display_name"
+                                    name="display_name"
+                                    class="form-control p-3"
+                                    placeholder="Es. Lorenzo M."
+                                    autocomplete="name"
+                                />
+                                <div class="form-text">Se lo lasci vuoto, useremo il nickname.</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DETTAGLI UNIBO -->
+                    <section class="profile-section">
+                        <h3 class="profile-section-title">DETTAGLI UNIBO</h3>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="course" class="form-label">Corso di laurea</label>
+                                <select id="course" name="course" class="form-select p-3">
+                                    <option value="">Seleziona…</option>
+                                    <option>Informatica</option>
+                                    <option>Ingegneria</option>
+                                    <option>Economia</option>
+                                    <option>Medicina</option>
+                                    <option>Giurisprudenza</option>
+                                    <option>Altro</option>
+                                </select>
+                            </div>
+
+                            <div class="col-6 col-md-3">
+                                <label for="year" class="form-label">Anno</label>
+                                <select id="year" name="year" class="form-select p-3">
+                                    <option value="">—</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>Fuori corso</option>
+                                </select>
+                            </div>
+
+                            <div class="col-6 col-md-3">
+                                <label for="campus" class="form-label">Campus</label>
+                                <select id="campus" name="campus" class="form-select p-3">
+                                    <option value="">—</option>
+                                    <option>Bologna</option>
+                                    <option>Cesena</option>
+                                    <option>Forlì</option>
+                                    <option>Ravenna</option>
+                                    <option>Rimini</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="bio" class="form-label">Bio (breve)</label>
+                                <textarea
+                                    id="bio"
+                                    name="bio"
+                                    class="form-control p-3"
+                                    rows="3"
+                                    placeholder="Es. 'Cacciatore di XP tra una lezione e l'altra'"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- PREFERENZE -->
+                    <section class="profile-section">
+                        <h3 class="profile-section-title">PREFERENZE MISSIONI</h3>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pref_events" name="pref_events" />
+                                <label class="form-check-label" for="pref_events">Eventi</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pref_study" name="pref_study" />
+                                <label class="form-check-label" for="pref_study">Studio</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pref_sport" name="pref_sport" />
+                                <label class="form-check-label" for="pref_sport">Sport</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pref_social" name="pref_social" />
+                                <label class="form-check-label" for="pref_social">Social</label>
+                            </div>
+                        </div>
+
+                        <div class="form-text mt-2">
+                            (Sono preferenze iniziali: poi le useremo per personalizzare le missioni in dashboard.)
+                        </div>
+                    </section>
+
+                    <!-- AVATAR -->
+                    <section class="profile-section">
+                        <h3 class="profile-section-title">SCEGLI AVATAR</h3>
+
+                        <div class="profile-avatar-grid" id="avatarGrid">
+                            <label class="profile-avatar-card position-relative">
+                                <input class="profile-avatar-radio" type="radio" name="avatar" value="sprinter" checked />
+                                <div class="profile-avatar-swatch"></div>
+                                <div class="profile-avatar-name">Sprinter</div>
+                            </label>
+
+                            <label class="profile-avatar-card position-relative">
+                                <input class="profile-avatar-radio" type="radio" name="avatar" value="scholar" />
+                                <div class="profile-avatar-swatch"></div>
+                                <div class="profile-avatar-name">Scholar</div>
+                            </label>
+
+                            <label class="profile-avatar-card position-relative">
+                                <input class="profile-avatar-radio" type="radio" name="avatar" value="techie" />
+                                <div class="profile-avatar-swatch"></div>
+                                <div class="profile-avatar-name">Techie</div>
+                            </label>
+
+                            <label class="profile-avatar-card position-relative">
+                                <input class="profile-avatar-radio" type="radio" name="avatar" value="explorer" />
+                                <div class="profile-avatar-swatch"></div>
+                                <div class="profile-avatar-name">Explorer</div>
+                            </label>
+                        </div>
+
+                        <div class="form-text mt-2">
+                            Placeholder: poi mettiamo sprite/icone 8-bit. La selezione è gestita in JS (no :has()).
+                        </div>
+                    </section>
+
+                    <!-- PRIVACY -->
+                    <section class="profile-section">
+                        <h3 class="profile-section-title">PRIVACY</h3>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="privacy_public" name="privacy_public" />
+                            <label class="form-check-label" for="privacy_public">
+                                Rendi visibile il mio profilo (nickname + livello) agli altri studenti
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- AZIONI -->
+                    <div class="profile-actions">
+                        <a class="btn-pixel" href="registrazione.php">Indietro</a>
+                        <button type="submit" class="btn-pixel-yellow">Salva e vai alla dashboard</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer-ubq mt-5">
+            <div class="container py-4">
+                <div class="row gy-3 align-items-start">
+                    <div class="col-md-4">
+                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+                        <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <ul class="list-unstyled small mb-0">
+                            <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
+                            <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
+                            <li><a href="chi-siamo.html" class="footer-link text-white text-decoration-none">Chi siamo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-2 text-white">Seguici</h6>
+                        <div class="footer-social d-flex gap-3">
+                            <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
+                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom border-top border-light-subtle mt-4 pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center small text-secondary">
+                    <span>&copy; 2026 UniBoQuest – Prototipo Alpha.</span>
+                </div>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/edit_profile.js"></script>
+    </body>
+</html>

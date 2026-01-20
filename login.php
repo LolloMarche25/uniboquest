@@ -1,19 +1,72 @@
+<?php
+declare(strict_types=1);
+
+session_start();
+
+if (!empty($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+require __DIR__ . '/config/db.php';
+
+$errors = [];
+$email = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string)($_POST['email'] ?? ''));
+    $password = (string)($_POST['password'] ?? '');
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Email non valida.";
+    }
+    if ($password === '') {
+        $errors[] = "Inserisci la password.";
+    }
+
+    if (!$errors) {
+        $stmt = $mysqli->prepare("SELECT id, email, password_hash FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $user = $res->fetch_assoc();
+        $stmt->close();
+
+        if (!$user || !password_verify($password, (string)$user['password_hash'])) {
+            $errors[] = "Credenziali non valide.";
+        } else {
+            $_SESSION['user_id'] = (int)$user['id'];
+            $_SESSION['user_email'] = (string)$user['email'];
+
+            // Se profilo non esiste -> onboarding, altrimenti dashboard
+            $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE user_id = ? LIMIT 1");
+            $userId = (int)$user['id'];
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $hasProfile = (bool)$stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            header('Location: ' . ($hasProfile ? 'dashboard.php' : 'edit_profile.php'));
+            exit;
+
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="it">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Crea il tuo account UniBoQuest e inizia l'avventura." />
+        <meta name="description" content="Accedi al portale UniBoQuest per gestire le tue missioni." />
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-        
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/manual.css">
-        <link rel="stylesheet" href="css/autenticazione.css">
 
-        <title>UniBoQuest - Registrazione</title>
+        <link rel="stylesheet" href="css/main.css">
+
+        <title>UniBoQuest - Login</title>
     </head>
 
     <body class="manual-bg auth-page">
@@ -33,8 +86,8 @@
                             <li class="nav-item"><a class="nav-link" href="faq.html">FAQ</a></li>
                         </ul>
                         <div class="d-flex gap-2 ubq-nav-right">
-                            <a class="btn-pixel-yellow" href="login.html">Accedi</a>
-                            <a class="btn-pixel" href="registrazione.html" aria-current="page">Registrati</a>
+                            <a class="btn-pixel-yellow" href="login.php" aria-current="page">Accedi</a>
+                            <a class="btn-pixel" href="registrazione.php">Registrati</a>
                         </div>
                     </div>
                 </div>
@@ -43,36 +96,52 @@
 
         <main id="contenuto" class="container">
             <div class="auth-card">
-                <h2 class="mb-4 font-8bit text-center text-white" style="font-size: 1.2rem;">NUOVO PLAYER</h2>
+                <h2 class="mb-4 font-8bit text-center text-white">LOGIN</h2>
 
-                <form action="#" method="post">
-                    <div class="mb-3">
-                        <label for="nickname" class="form-label">Nickname</label>
-                        <input type="text" id="nickname" name="nickname" class="form-control p-3" placeholder="Username pubblico" required> 
+                <?php if (!empty($errors)): ?>
+                    <div class="checkin-msg err" style="margin-bottom: 1rem;">
+                        <?php foreach ($errors as $e): ?>
+                            <div><?php echo htmlspecialchars($e); ?></div>
+                        <?php endforeach; ?>
                     </div>
+                <?php endif; ?>
 
+                <form action="login.php" method="post">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Ateneo</label>
-                        <input type="email" id="email" name="email" class="form-control p-3" placeholder="nome.cognome@studio.unibo.it" autocomplete="email" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control p-3" autocomplete="new-password" required>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control p-3"
+                            placeholder="nome.cognome@studio.unibo.it"
+                            autocomplete="email"
+                            required
+                            value="<?php echo htmlspecialchars($email); ?>"
+                        >
                     </div>
 
                     <div class="mb-4">
-                        <label for="password2" class="form-label">Conferma password</label>
-                        <input type="password" id="password2" name="password2" class="form-control p-3" required>
+                        <label for="password" class="form-label">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control p-3"
+                            autocomplete="current-password"
+                            required
+                        >
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn-pixel-yellow py-3 font-8bit" style="font-size: 0.9rem;">CREA ACCOUNT</button>
+                        <button type="submit" class="btn-pixel-yellow py-3 font-8bit" style="font-size: 0.9rem;">
+                            ENTRA
+                        </button>
                     </div>
                 </form>
 
                 <div class="auth-footer-link">
-                    Hai già un account? <a href="login.html">Esegui il Login</a>
+                    Non hai ancora un account? <a href="registrazione.php">Registrati ora</a>
                 </div>
             </div>
         </main>

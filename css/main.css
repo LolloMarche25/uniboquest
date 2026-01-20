@@ -8,4 +8,9 @@
 @import url('footer.css');
 @import url('responsive.css');
 @import url('autenticazione.css');
+@import url('profile.css');
+@import url('dashboard.css');
+@import url('missioni.css');
+@import url('missione.css');
+@import url('checkin.css');
 @import url('faq.css');

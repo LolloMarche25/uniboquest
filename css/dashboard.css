@@ -1,0 +1,105 @@
+/* ========================================================== */
+/* DASHBOARD (area privata) - coerente con AUTH/PROFILO        */
+/* ========================================================== */
+
+body.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body.dashboard-page main {
+  flex: 1 0 auto;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.dashboard-card {
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 2px solid rgba(255, 234, 0, 0.3);
+  padding: 2.25rem;
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-title {
+  color: #ffffff;
+  margin: 0;
+}
+
+.dashboard-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0.4rem;
+}
+
+.dashboard-badge {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 234, 0, 0.35);
+  color: #ffea00;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.dashboard-tile {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+  height: 100%;
+}
+
+.dashboard-tile-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
+
+.dashboard-tile-value {
+  font-family: 'Press Start 2P', cursive;
+  color: #ffffff;
+  font-size: 1.05rem;
+  margin-top: 0.5rem;
+}
+
+/* progress bar più “neon” senza cambiare palette globale */
+.dashboard-progress {
+  height: 12px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dashboard-progress .progress-bar {
+  background: #ffea00;
+}
+
+/* box liste missioni */
+.dashboard-mission {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-mission-title {
+  color: #ffffff;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  margin: 0;
+}
+
+.dashboard-mission-meta {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
