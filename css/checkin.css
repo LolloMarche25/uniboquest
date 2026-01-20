@@ -1,0 +1,128 @@
+/* ========================================================== */
+/* CHECK-IN (area privata) - coerente con AUTH/PROFILO/DASH    */
+/* ========================================================== */
+
+body.checkin-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body.checkin-page main {
+  flex: 1 0 auto;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.checkin-card {
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 2px solid rgba(255, 234, 0, 0.3);
+  padding: 2.25rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.checkin-title {
+  color: #ffffff;
+  margin: 0;
+}
+
+.checkin-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0.5rem;
+}
+
+.checkin-badge {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 234, 0, 0.35);
+  color: #ffea00;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.checkin-panel {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+}
+
+.checkin-qr {
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  background: rgba(0, 0, 0, 0.22);
+  height: 240px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.checkin-qr p {
+  margin: 0;
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.checkin-page .form-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: #ffea00;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.checkin-page .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff !important;
+  font-family: 'Share Tech Mono', monospace;
+  border-radius: 0;
+}
+
+.checkin-page .form-control:focus {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: #ffea00;
+  box-shadow: 0 0 0 4px rgba(255, 234, 0, 0.2);
+  outline: none;
+}
+
+.checkin-help {
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.5rem;
+}
+
+.checkin-msg {
+  font-family: 'Share Tech Mono', monospace;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.checkin-msg.ok {
+  border-color: rgba(255, 234, 0, 0.35);
+}
+
+.checkin-msg.err {
+  border-color: rgba(255, 120, 120, 0.5);
+}
+
+.checkin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.checkin-actions .btn-pixel,
+.checkin-actions .btn-pixel-yellow {
+  flex: 1 1 220px;
+}
