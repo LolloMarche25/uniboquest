@@ -1,273 +1,89 @@
-/* =========================
-   HOME HERO (scrivania + monitor)
-   ========================= */
+body.home-page {
+    background: radial-gradient(circle, #444 0%, #111 100%);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
-.hero-ubq {
-  margin-top: 1rem;
+.content-wrapper { 
+    flex: 1 0 auto; 
+    width: 100%; 
+}
+
+.hero-wrapper {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 15px;
+}
+
+.os-frame {
+    border: 1px solid #333;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.8);
 }
 
 .hero-ubq-scene {
-  --mon-top: 27.9%;
-  --mon-left: 66.85%;
-  --mon-w: 24.8%;
-  --mon-h: 36.3%;
-
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #111;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.20);
+    position: relative;
+    width: 100%;
 }
 
 .hero-ubq-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  position: relative;
-  z-index: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0.6;
 }
 
 .hero-ubq-copy {
-  position: absolute;
-  top: 6%;
-  left: 6%;
-  max-width: 44ch;
-  z-index: 2;
-
-  color: #ffffff;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
-
-  background: rgba(10, 10, 10, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
-  padding: 0.9rem 1rem;
-
-  backdrop-filter: blur(3px);
+    position: absolute;
+    top: 15%; left: 5%; width: 42%;
+    background: rgba(0, 0, 0, 0.9);
+    border-left: 4px solid #ffea00;
+    padding: 25px;
+    z-index: 10;
 }
 
 .hero-ubq-title {
-  font-size: clamp(1.2rem, 2.2vw, 2rem);
-  margin: 0 0 0.5rem 0;
+    color: #ffea00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,.8);
 }
 
 .hero-ubq-subtitle {
-  margin: 0 0 0.5rem 0;
-  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    color: rgba(255,255,255,.85);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.05rem;
+    line-height: 1.5;
 }
 
-.hero-ubq-note {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 0.95rem;
-}
-
+/* MONITOR E BOTTONI */
 .hero-ubq-monitor {
-  position: absolute;
-  top: var(--mon-top);
-  left: var(--mon-left);
-  width: var(--mon-w);
-  height: var(--mon-h);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-
-  background: rgba(0, 0, 0, 0.10);
-  border-radius: 12px;
-  z-index: 3;
-
-  transition: box-shadow 180ms ease, transform 180ms ease;
+    position: absolute;
+    top: 28.5%; left: 66.8%; width: 24.5%; height: 35.5%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px;
+    z-index: 11;
 }
 
-.hero-ubq-monitor:hover {
-  box-shadow:
-    0 0 0 2px rgba(255, 217, 102, 0.55),
-    0 0 18px rgba(79, 209, 255, 0.35);
-  transform: translateY(-1px);
-}
-
-.hero-ubq-monitor:focus-within {
-  box-shadow:
-    0 0 0 3px rgba(255, 217, 102, 0.75),
-    0 0 24px rgba(179, 125, 255, 0.28);
-}
-
-.hero-ubq-btn {
-  display: inline-block;
-  text-decoration: none;
-}
-
-.hero-ubq-btn:focus-visible {
-  outline: 3px solid var(--ubq-gold);
-  outline-offset: 3px;
-}
-
-.hero-ubq-btn:hover {
-  animation: ubq-step-hover 240ms steps(3, end) 1;
-}
-
-.hero-ubq-scene::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-
-  background: radial-gradient(
-    circle at 18% 18%,
-    rgba(0, 0, 0, 0.28),
-    rgba(0, 0, 0, 0) 55%
-  );
-}
-
-.hero-ubq-scene::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-
-  background:
-    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0) 45%),
-    radial-gradient(circle at 60% 60%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.28) 100%),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0 1px, rgba(0, 0, 0, 0) 1px 4px);
-  mix-blend-mode: normal;
-  opacity: 0.8;
-}
-
-.hero-ubq-monitor .btn-pixel,
-.hero-ubq-monitor .btn-pixel-yellow {
-  width: 100%;
-  text-align: center;
-}
-
-@keyframes ubq-step-hover {
-  0%   { transform: translate(0, 0); filter: none; }
-  50%  { transform: translate(1px, -1px); filter: contrast(1.05); }
-  100% { transform: translate(2px, -2px); filter: contrast(1.1); }
-}
-
-/* =========================
-   HOME: Transizione (entrata nel mondo)
-   ========================= */
-
-.ubq-transition {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(1);
-
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
-    repeating-linear-gradient(90deg,
-      rgba(255, 255, 255, 0.07) 0 2px,
-      rgba(0, 0, 0, 0) 2px 6px
-    );
-}
-
-.ubq-transition.is-on {
-  opacity: 1;
-  animation: ubq-enter 900ms ease-in-out forwards;
-}
-
-@keyframes ubq-enter {
-  0%   { opacity: 0; transform: scale(1);    filter: blur(0); }
-  30%  { opacity: 1; transform: scale(1.02); filter: blur(0.5px); }
-  70%  { opacity: 1; transform: scale(1.08); filter: blur(1px); }
-  100% { opacity: 1; transform: scale(1.12); filter: blur(1.2px); }
-}
-
-/* =========================
-   ACCESSIBILITÀ: riduzione animazioni
-   ========================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-ubq-btn:hover { animation: none; }
-  .ubq-transition.is-on { animation: none; }
-}
-
-/* =========================
-   RESPONSIVE: HOME HERO (mobile)
-   ========================= */
-
-@media (max-width: 767.98px) {
-
-  .hero-ubq {
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-  }
-
-  .hero-ubq-scene {
-    --mon-top: 17%;
-    --mon-left: 13.8%;
-    --mon-w: 72.6%;
-    --mon-h: 38%;
-
-    width: 100%;
-    max-width: none;
-    margin: 0;
-  }
-
-  .hero-ubq-img {
-    width: 100%;
-    height: auto;
-    object-fit: initial;
-  }
-
-  .hero-ubq-copy { display: none; }
-
-  .hero-ubq-copy-inmonitor {
+.btn-os-home {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    padding: 10px 0;
+    width: 85%;
+    transition: 0.2s;
+    text-decoration: none;
     text-align: center;
-    margin-bottom: 0;
+}
 
-    background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 12px;
-    padding: 0.6rem 0.75rem;
-
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.75);
-  }
-
-  .hero-ubq-title-inmonitor {
-    font-size: clamp(0.95rem, 3.1vw, 1.15rem);
-    line-height: 1.15;
-    margin-bottom: 0.35rem;
-  }
-
-  .hero-ubq-subtitle-inmonitor {
-    font-size: clamp(0.68rem, 2.2vw, 0.82rem);
-    line-height: 1.35;
-    opacity: 0.95;
-  }
-
-  .hero-ubq-monitor {
-    justify-content: center;
-    align-items: center;
-    padding: 0.65rem;
-    gap: 0.6rem;
-    color: #fff;
-  }
-
-  .hero-ubq-monitor .btn-pixel,
-  .hero-ubq-monitor .btn-pixel-yellow {
-    width: min(260px, 100%);
-    font-size: clamp(0.62rem, 2.0vw, 0.74rem);
-    padding: 0.42rem 0.8rem;
-  }
-
-  .hero-ubq-monitor .btn-pixel {
-    border-width: 2px;
-    box-shadow: 2px 2px 0px #4a0806;
-  }
-
-  .hero-ubq-monitor .btn-pixel-yellow {
-    border-width: 2px;
-    box-shadow: 2px 2px 0px #a88e30;
-  }
+.btn-os-home:hover {
+    background: #ffea00;
+    color: #000;
+    border-color: #ffea00;
 }
