@@ -1,3 +1,9 @@
+<?php
+declare(strict_types=1);
+require __DIR__ . '/includes/auth.php';
+
+$displayName = $_SESSION['user_email'] ?? 'Player';
+?>
 <!DOCTYPE html>
 <html lang="it">
     <head>
@@ -8,7 +14,6 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-
         <link rel="stylesheet" href="css/main.css" />
 
         <title>UniBoQuest - Dashboard</title>
@@ -20,7 +25,7 @@
         <header class="header-glass">
             <nav class="navbar navbar-expand-md navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand font-8bit" href="dashboard.html" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
+                    <a class="navbar-brand font-8bit" href="dashboard.php" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
                         aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
@@ -29,9 +34,9 @@
 
                     <div class="collapse navbar-collapse" id="nav">
                         <ul class="navbar-nav mx-auto mb-2 mb-md-0 ubq-nav-center">
-                            <li class="nav-item"><a class="nav-link active" href="dashboard.html" aria-current="page">DASHBOARD</a></li>
-                            <li class="nav-item"><a class="nav-link" href="missioni.html">MISSIONI</a></li>
-                            <li class="nav-item"><a class="nav-link" href="edit_profile.html">PROFILO</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="dashboard.php" aria-current="page">DASHBOARD</a></li>
+                            <li class="nav-item"><a class="nav-link" href="missioni.php">MISSIONI</a></li>
+                            <li class="nav-item"><a class="nav-link" href="edit_profile.php">PROFILO</a></li>
                         </ul>
 
                         <div class="d-flex gap-2 ubq-nav-right">
@@ -47,7 +52,9 @@
                 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
                     <div>
                         <h2 class="dashboard-title font-8bit" style="font-size: 1.15rem;">DASHBOARD</h2>
-                        <p class="dashboard-subtitle mb-0">Bentornato, <strong>Player</strong>! (placeholder)</p>
+                        <p class="dashboard-subtitle mb-0">
+                            Bentornato, <strong><?php echo htmlspecialchars($displayName); ?></strong>!
+                        </p>
                     </div>
 
                     <span class="dashboard-badge" id="dashBadge">LIV 1 • 0 XP</span>
@@ -97,9 +104,9 @@
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
-                            <a class="btn-pixel" href="missioni.html">Vai alle missioni</a>
-                            <a class="btn-pixel" href="checkin.html">Check-in</a>
-                            <a class="btn-pixel-yellow" href="edit_profile.html">Modifica profilo</a>
+                            <a class="btn-pixel" href="missioni.php">Vai alle missioni</a>
+                            <a class="btn-pixel" href="checkin.php">Check-in</a>
+                            <a class="btn-pixel-yellow" href="edit_profile.php">Modifica profilo</a>
                             <button type="button" class="btn-pixel" id="resetDemoBtn">Reset demo</button>
                         </div>
                     </div>
@@ -109,7 +116,7 @@
                 <div class="mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <h3 class="font-8bit mb-0" style="font-size: 0.95rem; color: #fff;">MISSIONI CONSIGLIATE</h3>
-                        <a class="dashboard-badge text-decoration-none" href="missioni.html">VEDI TUTTE</a>
+                        <a class="dashboard-badge text-decoration-none" href="missioni.php">VEDI TUTTE</a>
                     </div>
 
                     <div class="d-grid gap-2">
@@ -118,7 +125,7 @@
                                 <p class="dashboard-mission-title">Prima Quest: Benvenuto in UniBoQuest</p>
                                 <div class="dashboard-mission-meta">+20 XP • Facile • 5 min</div>
                             </div>
-                            <a class="btn-pixel" href="missioni.html">Apri</a>
+                            <a class="btn-pixel" href="missioni.php">Apri</a>
                         </div>
 
                         <div class="dashboard-mission">
@@ -126,7 +133,7 @@
                                 <p class="dashboard-mission-title">Check-in Evento (demo)</p>
                                 <div class="dashboard-mission-meta">+50 XP • Media • QR / codice</div>
                             </div>
-                            <a class="btn-pixel" href="checkin.html">Apri</a>
+                            <a class="btn-pixel" href="checkin.php">Apri</a>
                         </div>
 
                         <div class="dashboard-mission">
@@ -134,7 +141,7 @@
                                 <p class="dashboard-mission-title">Missione Studio: 25 minuti focus</p>
                                 <div class="dashboard-mission-meta">+30 XP • Facile • Pomodoro</div>
                             </div>
-                            <a class="btn-pixel" href="missioni.html">Apri</a>
+                            <a class="btn-pixel" href="missioni.php">Apri</a>
                         </div>
                     </div>
                 </div>
@@ -142,7 +149,7 @@
                 <div class="mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <h3 class="font-8bit mb-0" style="font-size: 0.95rem; color: #fff;">LE TUE MISSIONI ATTIVE</h3>
-                        <a class="dashboard-badge text-decoration-none" href="missioni.html">GESTISCI</a>
+                        <a class="dashboard-badge text-decoration-none" href="missioni.php">GESTISCI</a>
                     </div>
 
                     <div id="dashActiveList" class="d-grid gap-2"></div>
@@ -152,7 +159,7 @@
                             <p class="dashboard-mission-title mb-1">Nessuna missione attiva</p>
                             <div class="dashboard-mission-meta">Vai su Missioni e premi “Partecipa”.</div>
                         </div>
-                        <a class="btn-pixel" href="missioni.html">Apri</a>
+                        <a class="btn-pixel" href="missioni.php">Apri</a>
                     </div>
                 </div>
             </div>
