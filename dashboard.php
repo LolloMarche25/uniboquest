@@ -1,9 +1,62 @@
 <?php
 declare(strict_types=1);
+
 require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/includes/profile_guard.php';
+require __DIR__ . '/config/db.php';
 
-$displayName = $_SESSION['user_email'] ?? 'Player';
+$userId = (int)$_SESSION['user_id'];
+$displayName = (string)($_SESSION['user_email'] ?? 'Player');
+
+$XP_PER_LEVEL = 100;
+
+// XP totale = somma XP delle missioni completate
+$stmt = $mysqli->prepare("
+  SELECT COALESCE(SUM(m.xp), 0) AS xp_total
+  FROM user_missions um
+  JOIN missions m ON m.id = um.mission_id
+  WHERE um.user_id = ? AND um.status = 'completed'
+");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$xpTotal = (int)($stmt->get_result()->fetch_assoc()['xp_total'] ?? 0);
+$stmt->close();
+
+// Missioni attive (count)
+$stmt = $mysqli->prepare("
+  SELECT COUNT(*) AS cnt
+  FROM user_missions
+  WHERE user_id = ? AND status = 'active'
+");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$activeCount = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
+$stmt->close();
+
+// Lista missioni attive (max 3)
+$stmt = $mysqli->prepare("
+  SELECT m.id, m.title
+  FROM user_missions um
+  JOIN missions m ON m.id = um.mission_id
+  WHERE um.user_id = ? AND um.status = 'active'
+  ORDER BY um.joined_at DESC
+  LIMIT 3
+");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$activeMissions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Level math
+$level = intdiv($xpTotal, $XP_PER_LEVEL) + 1;
+$inLevel = $xpTotal % $XP_PER_LEVEL;
+$pct = (int)round(($inLevel / $XP_PER_LEVEL) * 100);
+if ($pct < 0) $pct = 0;
+if ($pct > 100) $pct = 100;
+
+// Per UI: "0 / 100" ecc.
+$xpInLevelLabel = $inLevel . " / " . $XP_PER_LEVEL;
+$xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -58,7 +111,9 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                         </p>
                     </div>
 
-                    <span class="dashboard-badge" id="dashBadge">LIV 1 • 0 XP</span>
+                    <span class="dashboard-badge">
+                        LIV <?php echo (int)$level; ?> • <?php echo (int)$xpTotal; ?> XP
+                    </span>
                 </div>
 
                 <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
@@ -68,21 +123,21 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                     <div class="col-12 col-md-4">
                         <div class="dashboard-tile">
                             <div class="dashboard-tile-label">Livello</div>
-                            <div class="dashboard-tile-value" id="dashLevel">1</div>
+                            <div class="dashboard-tile-value"><?php echo (int)$level; ?></div>
                         </div>
                     </div>
 
                     <div class="col-12 col-md-4">
                         <div class="dashboard-tile">
                             <div class="dashboard-tile-label">XP</div>
-                            <div class="dashboard-tile-value" id="dashXPInLevel">0 / 100</div>
+                            <div class="dashboard-tile-value"><?php echo htmlspecialchars($xpInLevelLabel); ?></div>
                             <div class="dashboard-subtitle mb-0" style="margin-top: .35rem;">
-                                Totale: <span id="dashXP">0 / 100</span>
+                                Totale: <span><?php echo htmlspecialchars($xpTotalLabel); ?></span>
                             </div>
 
                             <div class="progress dashboard-progress mt-2" role="progressbar" aria-label="Progresso XP"
-                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                <div class="progress-bar" id="dashXPBar" style="width: 0%"></div>
+                                aria-valuenow="<?php echo (int)$pct; ?>" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" style="width: <?php echo (int)$pct; ?>%"></div>
                             </div>
 
                         </div>
@@ -91,7 +146,7 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                     <div class="col-12 col-md-4">
                         <div class="dashboard-tile">
                             <div class="dashboard-tile-label">Missioni attive</div>
-                            <div class="dashboard-tile-value" id="dashActiveMissions">0</div>
+                            <div class="dashboard-tile-value"><?php echo (int)$activeCount; ?></div>
                         </div>
                     </div>
                 </div>
@@ -106,9 +161,8 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
 
                         <div class="d-flex flex-wrap gap-2">
                             <a class="btn-pixel" href="missioni.php">Vai alle missioni</a>
-                            <a class="btn-pixel" href="checkin.php">Check-in</a>
+                            <a class="btn-pixel" href="checkin.php?id=checkin">Check-in</a>
                             <a class="btn-pixel-yellow" href="edit_profile.php">Modifica profilo</a>
-                            <button type="button" class="btn-pixel" id="resetDemoBtn">Reset demo</button>
                         </div>
                     </div>
                 </div>
@@ -126,15 +180,15 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                                 <p class="dashboard-mission-title">Prima Quest: Benvenuto in UniBoQuest</p>
                                 <div class="dashboard-mission-meta">+20 XP • Facile • 5 min</div>
                             </div>
-                            <a class="btn-pixel" href="missioni.php">Apri</a>
+                            <a class="btn-pixel" href="missione_dettaglio.php?id=intro">Apri</a>
                         </div>
 
                         <div class="dashboard-mission">
                             <div>
-                                <p class="dashboard-mission-title">Check-in Evento (demo)</p>
+                                <p class="dashboard-mission-title">Check-in Evento</p>
                                 <div class="dashboard-mission-meta">+50 XP • Media • QR / codice</div>
                             </div>
-                            <a class="btn-pixel" href="checkin.php">Apri</a>
+                            <a class="btn-pixel" href="missione_dettaglio.php?id=checkin">Apri</a>
                         </div>
 
                         <div class="dashboard-mission">
@@ -142,7 +196,7 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                                 <p class="dashboard-mission-title">Missione Studio: 25 minuti focus</p>
                                 <div class="dashboard-mission-meta">+30 XP • Facile • Pomodoro</div>
                             </div>
-                            <a class="btn-pixel" href="missioni.php">Apri</a>
+                            <a class="btn-pixel" href="missione_dettaglio.php?id=study">Apri</a>
                         </div>
                     </div>
                 </div>
@@ -153,15 +207,27 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
                         <a class="dashboard-badge text-decoration-none" href="missioni.php">GESTISCI</a>
                     </div>
 
-                    <div id="dashActiveList" class="d-grid gap-2"></div>
-
-                    <div id="dashActiveEmpty" class="dashboard-mission" style="opacity: .9;">
-                        <div>
-                            <p class="dashboard-mission-title mb-1">Nessuna missione attiva</p>
-                            <div class="dashboard-mission-meta">Vai su Missioni e premi “Partecipa”.</div>
+                    <?php if (empty($activeMissions)): ?>
+                        <div class="dashboard-mission" style="opacity: .9;">
+                            <div>
+                                <p class="dashboard-mission-title mb-1">Nessuna missione attiva</p>
+                                <div class="dashboard-mission-meta">Vai su Missioni e premi “Partecipa”.</div>
+                            </div>
+                            <a class="btn-pixel" href="missioni.php">Apri</a>
                         </div>
-                        <a class="btn-pixel" href="missioni.php">Apri</a>
-                    </div>
+                    <?php else: ?>
+                        <div class="d-grid gap-2">
+                            <?php foreach ($activeMissions as $m): ?>
+                                <div class="dashboard-mission">
+                                    <div>
+                                        <p class="dashboard-mission-title mb-1"><?php echo htmlspecialchars((string)$m['title']); ?></p>
+                                        <div class="dashboard-mission-meta">Stato: In corso</div>
+                                    </div>
+                                    <a class="btn-pixel" href="missione_dettaglio.php?id=<?php echo urlencode((string)$m['id']); ?>">Apri</a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </main>
@@ -200,6 +266,5 @@ $displayName = $_SESSION['user_email'] ?? 'Player';
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="js/dashboard.js"></script>
     </body>
 </html>

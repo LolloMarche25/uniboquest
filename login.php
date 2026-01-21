@@ -1,11 +1,8 @@
 <?php
 declare(strict_types=1);
 
-session_start();
-
-if (!empty($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit;
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
 }
 
 require __DIR__ . '/config/db.php';
@@ -13,8 +10,21 @@ require __DIR__ . '/config/db.php';
 $errors = [];
 $email = '';
 
+if (!empty($_SESSION['user_id'])) {
+    $uid = (int)$_SESSION['user_id'];
+    $stmt = $mysqli->prepare("SELECT 1 FROM profiles WHERE user_id = ? LIMIT 1");
+    $stmt->bind_param("i", $uid);
+    $stmt->execute();
+    $stmt->store_result();
+    $hasProfile = $stmt->num_rows > 0;
+    $stmt->close();
+
+    header('Location: ' . ($hasProfile ? 'dashboard.php' : 'edit_profile.php'));
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim((string)($_POST['email'] ?? ''));
+    $email = strtolower(trim((string)($_POST['email'] ?? '')));
     $password = (string)($_POST['password'] ?? '');
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -25,30 +35,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $mysqli->prepare("SELECT id, email, password_hash FROM users WHERE email = ?");
+        $stmt = $mysqli->prepare("SELECT id, email, password_hash FROM users WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $res = $stmt->get_result();
-        $user = $res->fetch_assoc();
+        $stmt->bind_result($id, $emailDb, $passwordHashDb);
+
+        $found = $stmt->fetch();
         $stmt->close();
 
-        if (!$user || !password_verify($password, (string)$user['password_hash'])) {
+        if (!$found || !password_verify($password, (string)$passwordHashDb)) {
             $errors[] = "Credenziali non valide.";
         } else {
-            $_SESSION['user_id'] = (int)$user['id'];
-            $_SESSION['user_email'] = (string)$user['email'];
+            $_SESSION['user_id'] = (int)$id;
+            $_SESSION['user_email'] = (string)$emailDb;
 
-            // Se profilo non esiste -> onboarding, altrimenti dashboard
-            $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE user_id = ? LIMIT 1");
-            $userId = (int)$user['id'];
+            session_regenerate_id(true);
+
+            $stmt = $mysqli->prepare("SELECT 1 FROM profiles WHERE user_id = ? LIMIT 1");
+            $userId = (int)$id;
             $stmt->bind_param("i", $userId);
             $stmt->execute();
-            $hasProfile = (bool)$stmt->get_result()->fetch_assoc();
+            $stmt->store_result();
+            $hasProfile = $stmt->num_rows > 0;
             $stmt->close();
 
             header('Location: ' . ($hasProfile ? 'dashboard.php' : 'edit_profile.php'));
             exit;
-
         }
     }
 }

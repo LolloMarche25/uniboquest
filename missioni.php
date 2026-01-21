@@ -1,3 +1,83 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/profile_guard.php';
+require __DIR__ . '/config/db.php';
+
+$userId = (int)$_SESSION['user_id'];
+
+// Azioni POST (join/abandon) dalla lista
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $action = (string)($_POST['action'] ?? '');
+  $mid = trim((string)($_POST['mission_id'] ?? ''));
+
+  if ($mid !== '' && preg_match('/^[a-z0-9_-]{1,50}$/i', $mid)) {
+    if ($action === 'join') {
+      $stmt = $mysqli->prepare("
+        INSERT INTO user_missions (user_id, mission_id, status)
+        VALUES (?, ?, 'active')
+        ON DUPLICATE KEY UPDATE 
+            status = IF(status='completed','completed','active'),
+            completed_at = IF(status='completed', completed_at, NULL)
+      ");
+      $stmt->bind_param("is", $userId, $mid);
+      $stmt->execute();
+      $stmt->close();
+    }
+
+    if ($action === 'abandon') {
+      $stmt = $mysqli->prepare("DELETE FROM user_missions WHERE user_id = ? AND mission_id = ?");
+      $stmt->bind_param("is", $userId, $mid);
+      $stmt->execute();
+      $stmt->close();
+    }
+  }
+
+  header('Location: missioni.php');
+  exit;
+}
+
+// Carica missioni
+$res = $mysqli->query("
+  SELECT id, title, description, category, difficulty, time_label, xp, requires_checkin
+  FROM missions
+  WHERE active = 1
+  ORDER BY sort_order ASC, title ASC
+");
+$missions = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
+if ($res) $res->close();
+
+// Carica stati utente per tutte le missioni (mappa mission_id => status)
+$stmt = $mysqli->prepare("SELECT mission_id, status FROM user_missions WHERE user_id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+$state = [];
+foreach ($rows as $r) {
+  $state[(string)$r['mission_id']] = (string)$r['status']; // active|completed
+}
+
+function normCat(string $c): string {
+  $c = strtolower(trim($c));
+  // coerente con i tuoi filtri JS: eventi/studio/social/sport
+  if ($c === 'eventi' || $c === 'evento') return 'eventi';
+  if ($c === 'studio') return 'studio';
+  if ($c === 'sport') return 'sport';
+  return 'social';
+}
+
+function normDiff(string $d): string {
+  $d = strtolower(trim($d));
+  if ($d === 'facile') return 'facile';
+  if ($d === 'media') return 'media';
+  return 'difficile';
+}
+
+$missionCount = count($missions);
+?>
 <!DOCTYPE html>
 <html lang="it">
     <head>
@@ -21,7 +101,7 @@
         <header class="header-glass">
             <nav class="navbar navbar-expand-md navbar-dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand font-8bit" href="dashboard.html" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
+                    <a class="navbar-brand font-8bit" href="dashboard.php" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
                         aria-controls="nav" aria-expanded="false" aria-label="Apri menu">
@@ -30,9 +110,9 @@
 
                     <div class="collapse navbar-collapse" id="nav">
                         <ul class="navbar-nav mx-auto mb-2 mb-md-0 ubq-nav-center">
-                            <li class="nav-item"><a class="nav-link" href="dashboard.html">DASHBOARD</a></li>
-                            <li class="nav-item"><a class="nav-link active" href="missioni.html" aria-current="page">MISSIONI</a></li>
-                            <li class="nav-item"><a class="nav-link" href="edit_profile.html">PROFILO</a></li>
+                            <li class="nav-item"><a class="nav-link" href="dashboard.php">DASHBOARD</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="missioni.php" aria-current="page">MISSIONI</a></li>
+                            <li class="nav-item"><a class="nav-link" href="edit_profile.php">PROFILO</a></li>
                         </ul>
 
                         <div class="d-flex gap-2 ubq-nav-right">
@@ -51,12 +131,14 @@
                         <p class="missioni-subtitle mb-0">Scegli una quest e guadagna XP.</p>
                     </div>
 
-                    <span class="missioni-badge" id="resultBadge">4 missioni</span>
+                    <span class="missioni-badge" id="resultBadge">
+                      <?php echo $missionCount . ($missionCount === 1 ? " missione" : " missioni"); ?>
+                    </span>
                 </div>
 
                 <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
 
-                <!-- Filtri -->
+                <!-- Filtri (JS UI) -->
                 <div class="missioni-panel mb-3">
                     <div class="row g-3 align-items-end">
                         <div class="col-12 col-md-5">
@@ -93,87 +175,74 @@
 
                 <!-- Lista missioni -->
                 <div class="d-grid gap-3" id="missionList">
+                  <?php foreach ($missions as $m):
+                    $mid = (string)$m['id'];
+                    $title = (string)$m['title'];
+                    $desc = (string)$m['description'];
+                    $cat = normCat((string)$m['category']);
+                    $diff = normDiff((string)$m['difficulty']);
+                    $xp = (int)$m['xp'];
+                    $timeLabel = (string)($m['time_label'] ?? '');
+                    $requiresCheckin = ((int)$m['requires_checkin'] === 1);
 
-                    <!-- Missione 1 -->
-                    <article class="mission-card" data-title="Prima Quest: Benvenuto in UniBoQuest" data-cat="social" data-diff="facile">
+                    $st = $state[$mid] ?? ''; // ''|active|completed
+                    $isActive = ($st === 'active');
+                    $isCompleted = ($st === 'completed');
+                  ?>
+                    <article class="mission-card"
+                      data-title="<?php echo htmlspecialchars($title); ?>"
+                      data-cat="<?php echo htmlspecialchars($cat); ?>"
+                      data-diff="<?php echo htmlspecialchars($diff); ?>"
+                    >
                         <div class="d-flex flex-wrap justify-content-between gap-2">
-                            <p class="mission-title">Prima Quest: Benvenuto in UniBoQuest</p>
-                            <span class="mission-pill xp">+20 XP</span>
+                            <p class="mission-title"><?php echo htmlspecialchars($title); ?></p>
+                            <span class="mission-pill xp">+<?php echo $xp; ?> XP</span>
                         </div>
-                        <p class="mission-desc">Completa il tutorial e sblocca la tua prima ricompensa.</p>
+
+                        <p class="mission-desc"><?php echo htmlspecialchars($desc); ?></p>
 
                         <div class="mission-meta">
-                            <span class="mission-pill">Categoria: Social</span>
-                            <span class="mission-pill">Difficoltà: Facile</span>
-                            <span class="mission-pill">Tempo: 5 min</span>
+                            <span class="mission-pill">Categoria: <?php echo htmlspecialchars(ucfirst($cat)); ?></span>
+                            <span class="mission-pill">Difficoltà: <?php echo htmlspecialchars(ucfirst($diff)); ?></span>
+                            <?php if ($timeLabel !== ''): ?>
+                              <span class="mission-pill">Tempo: <?php echo htmlspecialchars($timeLabel); ?></span>
+                            <?php endif; ?>
+                            <?php if ($requiresCheckin): ?>
+                              <span class="mission-pill">Metodo: QR/Codice</span>
+                            <?php endif; ?>
+
+                            <?php if ($isCompleted): ?>
+                              <span class="mission-pill">Stato: Completata</span>
+                            <?php elseif ($isActive): ?>
+                              <span class="mission-pill">Stato: In corso</span>
+                            <?php endif; ?>
                         </div>
 
                         <div class="mission-actions">
-                            <a class="btn-pixel-yellow" href="missione_dettaglio.html?id=intro">Dettagli</a>
-                            <a class="btn-pixel" href="missione_dettaglio.html?id=intro">Partecipa</a>
+                            <?php if ($requiresCheckin): ?>
+                              <a class="btn-pixel-yellow" href="checkin.php?id=<?php echo urlencode($mid); ?>">Vai al check-in</a>
+                            <?php else: ?>
+                              <a class="btn-pixel-yellow" href="missione_dettaglio.php?id=<?php echo urlencode($mid); ?>">Dettagli</a>
+                            <?php endif; ?>
+
+                            <?php if ($isCompleted): ?>
+                              <button class="btn-pixel" type="button" disabled>Completata</button>
+                            <?php elseif ($isActive): ?>
+                              <form method="post" action="missioni.php" style="display:inline;">
+                                <input type="hidden" name="action" value="abandon">
+                                <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars($mid); ?>">
+                                <button class="btn-pixel" type="submit">Abbandona</button>
+                              </form>
+                            <?php else: ?>
+                              <form method="post" action="missioni.php" style="display:inline;">
+                                <input type="hidden" name="action" value="join">
+                                <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars($mid); ?>">
+                                <button class="btn-pixel" type="submit">Partecipa</button>
+                              </form>
+                            <?php endif; ?>
                         </div>
                     </article>
-
-                    <!-- Missione 2 -->
-                    <article class="mission-card" data-title="Check-in Evento (demo)" data-cat="eventi" data-diff="media">
-                        <div class="d-flex flex-wrap justify-content-between gap-2">
-                            <p class="mission-title">Check-in Evento (demo)</p>
-                            <span class="mission-pill xp">+50 XP</span>
-                        </div>
-                        <p class="mission-desc">Conferma la presenza con QR. Se non puoi, usa un codice testuale.</p>
-
-                        <div class="mission-meta">
-                            <span class="mission-pill">Categoria: Eventi</span>
-                            <span class="mission-pill">Difficoltà: Media</span>
-                            <span class="mission-pill">Metodo: QR/Codice</span>
-                        </div>
-
-                        <div class="mission-actions">
-                            <a class="btn-pixel-yellow" href="checkin.html">Vai al check-in</a>
-                            <a class="btn-pixel" href="missione_dettaglio.html?id=checkin">Dettagli</a>
-                        </div>
-                    </article>
-
-                    <!-- Missione 3 -->
-                    <article class="mission-card" data-title="Missione Studio: 25 minuti focus" data-cat="studio" data-diff="facile">
-                        <div class="d-flex flex-wrap justify-content-between gap-2">
-                            <p class="mission-title">Missione Studio: 25 minuti focus</p>
-                            <span class="mission-pill xp">+30 XP</span>
-                        </div>
-                        <p class="mission-desc">Fai una sessione Pomodoro e segna la missione come completata.</p>
-
-                        <div class="mission-meta">
-                            <span class="mission-pill">Categoria: Studio</span>
-                            <span class="mission-pill">Difficoltà: Facile</span>
-                            <span class="mission-pill">Tempo: 25 min</span>
-                        </div>
-
-                        <div class="mission-actions">
-                            <a class="btn-pixel-yellow" href="missione_dettaglio.html?id=study">Dettagli</a>
-                            <a class="btn-pixel" href="missione_dettaglio.html?id=study">Partecipa</a>
-                        </div>
-                    </article>
-
-                    <!-- Missione 4 -->
-                    <article class="mission-card" data-title="Allenamento Campus: 15 minuti" data-cat="sport" data-diff="difficile">
-                        <div class="d-flex flex-wrap justify-content-between gap-2">
-                            <p class="mission-title">Allenamento Campus: 15 minuti</p>
-                            <span class="mission-pill xp">+70 XP</span>
-                        </div>
-                        <p class="mission-desc">Completa un mini circuito e condividi la prova (demo).</p>
-
-                        <div class="mission-meta">
-                            <span class="mission-pill">Categoria: Sport</span>
-                            <span class="mission-pill">Difficoltà: Difficile</span>
-                            <span class="mission-pill">Tempo: 15 min</span>
-                        </div>
-
-                        <div class="mission-actions">
-                            <a class="btn-pixel-yellow" href="missione_dettaglio.html?id=sport">Dettagli</a>
-                            <a class="btn-pixel" href="missione_dettaglio.html?id=sport">Partecipa</a>
-                        </div>
-                    </article>
-
+                  <?php endforeach; ?>
                 </div>
 
                 <div id="emptyState" class="mission-empty mt-3 d-none">

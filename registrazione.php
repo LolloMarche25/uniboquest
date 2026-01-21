@@ -1,14 +1,22 @@
 <?php
 declare(strict_types=1);
 
-session_start();
-require __DIR__ . '/config/db.php'; // <-- deve creare $mysqli (mysqli)
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+require __DIR__ . '/config/db.php'; // deve creare $mysqli (mysqli)
+
+if (!empty($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
 
 $errors = [];
 $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim((string)($_POST['email'] ?? ''));
+    $email = strtolower(trim((string)($_POST['email'] ?? '')));
     $password = (string)($_POST['password'] ?? '');
     $password_confirm = (string)($_POST['password_confirm'] ?? '');
 
@@ -25,12 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Se tutto ok, controlla duplicati e inserisci
     if (!$errors) {
-        // Controllo email già presente
-        $stmt = $mysqli->prepare("SELECT id FROM users WHERE email = ?");
+        // Controllo email già presente (senza get_result per compatibilità)
+        $stmt = $mysqli->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $res = $stmt->get_result();
-        $exists = $res->fetch_assoc();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
         $stmt->close();
 
         if ($exists) {
@@ -48,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Login automatico post-registrazione
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['user_email'] = $email;
+
+                // Anti session fixation
+                session_regenerate_id(true);
 
                 // Step successivo: onboarding profilo
                 header('Location: edit_profile.php');

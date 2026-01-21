@@ -9,7 +9,6 @@ $userId = (int)$_SESSION['user_id'];
 $errors = [];
 $success = false;
 
-// valori default (per “re-render” se ci sono errori)
 $data = [
   'nickname' => '',
   'display_name' => '',
@@ -21,19 +20,20 @@ $data = [
   'pref_study' => 0,
   'pref_sport' => 0,
   'pref_social' => 0,
-  'avatar' => 'sprinter',
+  'avatar' => 'avatar3',
   'privacy_public' => 0,
 ];
 
-// Se profilo già esiste, pre-carica (utile quando aggiungerai value="" agli input)
+// Se profilo già esiste, pre-carica
 $stmt = $mysqli->prepare("SELECT * FROM profiles WHERE user_id = ? LIMIT 1");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $res = $stmt->get_result();
 if ($row = $res->fetch_assoc()) {
-    // merge senza rompere i default
     foreach ($data as $k => $v) {
-        if (array_key_exists($k, $row)) $data[$k] = $row[$k] ?? $v;
+        if (array_key_exists($k, $row)) {
+            $data[$k] = $row[$k] ?? $v;
+        }
     }
 }
 $stmt->close();
@@ -65,14 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Bio troppo lunga (max 255).";
     }
 
-    // (Opzionale ma consigliato) nickname unico
+    // nickname unico
     if (!$errors) {
         $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
         $stmt->bind_param("si", $data['nickname'], $userId);
         $stmt->execute();
         $dup = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-        if ($dup) $errors[] = "Nickname già in uso. Scegline un altro.";
+        if ($dup) {
+            $errors[] = "Nickname già in uso. Scegline un altro.";
+        }
     }
 
     if (!$errors) {
@@ -95,8 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               privacy_public=VALUES(privacy_public)";
 
         $stmt = $mysqli->prepare($sql);
+
+        // ✅ FIX: signature corretta (13 parametri)
         $stmt->bind_param(
-            "issssssiiiiisi",
+            "issssssiiiisi",
             $userId,
             $data['nickname'],
             $data['display_name'],
@@ -313,38 +317,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- AVATAR -->
                     <section class="profile-section">
-                        <h3 class="profile-section-title">SCEGLI AVATAR</h3>
+                    <h3 class="profile-section-title">SCEGLI AVATAR</h3>
 
-                        <div class="profile-avatar-grid" id="avatarGrid">
-                            <label class="profile-avatar-card position-relative">
-                                <input class="profile-avatar-radio" type="radio" name="avatar" value="sprinter" checked />
-                                <div class="profile-avatar-swatch"></div>
-                                <div class="profile-avatar-name">Sprinter</div>
-                            </label>
+                    <div class="profile-avatar-grid" id="avatarGrid">
+                        <?php
+                        $avatars = [
+                            ['id' => 'avatar1', 'label' => 'Avatar 1', 'file' => 'img/avatars/avatar1.png'],
+                            ['id' => 'avatar2', 'label' => 'Avatar 2', 'file' => 'img/avatars/avatar2.png'],
+                            ['id' => 'avatar3', 'label' => 'Avatar 3', 'file' => 'img/avatars/avatar3.png'],
+                        ];
+                        $current = (string)($data['avatar'] ?? 'avatar1');
+                        ?>
 
-                            <label class="profile-avatar-card position-relative">
-                                <input class="profile-avatar-radio" type="radio" name="avatar" value="scholar" />
-                                <div class="profile-avatar-swatch"></div>
-                                <div class="profile-avatar-name">Scholar</div>
-                            </label>
+                        <?php foreach ($avatars as $a): ?>
+                        <label class="profile-avatar-card position-relative">
+                            <input
+                            class="profile-avatar-radio"
+                            type="radio"
+                            name="avatar"
+                            value="<?php echo htmlspecialchars($a['id']); ?>"
+                            <?php echo ($current === $a['id']) ? 'checked' : ''; ?>
+                            required
+                            />
 
-                            <label class="profile-avatar-card position-relative">
-                                <input class="profile-avatar-radio" type="radio" name="avatar" value="techie" />
-                                <div class="profile-avatar-swatch"></div>
-                                <div class="profile-avatar-name">Techie</div>
-                            </label>
+                            <img
+                            src="<?php echo htmlspecialchars($a['file']); ?>"
+                            alt="<?php echo htmlspecialchars($a['label']); ?>"
+                            class="profile-avatar-img"
+                            loading="lazy"
+                            />
 
-                            <label class="profile-avatar-card position-relative">
-                                <input class="profile-avatar-radio" type="radio" name="avatar" value="explorer" />
-                                <div class="profile-avatar-swatch"></div>
-                                <div class="profile-avatar-name">Explorer</div>
-                            </label>
-                        </div>
+                            <div class="profile-avatar-name"><?php echo htmlspecialchars($a['label']); ?></div>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
 
-                        <div class="form-text mt-2">
-                            Placeholder: poi mettiamo sprite/icone 8-bit. La selezione è gestita in JS (no :has()).
-                        </div>
+                    <div class="form-text mt-2">
+                        Scegli un avatar: verrà salvato nel tuo profilo.
+                    </div>
                     </section>
+
 
                     <!-- PRIVACY -->
                     <section class="profile-section">
