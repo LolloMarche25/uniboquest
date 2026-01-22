@@ -127,7 +127,7 @@ $missionCount = count($missions);
             <div class="missioni-card">
                 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
                     <div>
-                        <h2 class="missioni-title font-8bit" style="font-size: 1.15rem;">MISSIONI</h2>
+                        <h1 class="missioni-title font-8bit h2" style="font-size: 1.15rem;">MISSIONI</h1>
                         <p class="missioni-subtitle mb-0">Scegli una quest e guadagna XP.</p>
                     </div>
 
@@ -138,15 +138,15 @@ $missionCount = count($missions);
 
                 <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
 
-                <div class="missioni-panel mb-3">
+                <section class="missioni-panel mb-3" aria-label="Filtri ricerca">
                     <div class="row g-3 align-items-end">
                         <div class="col-12 col-md-5">
-                            <label for="q" class="form-label">Cerca</label>
+                            <label for="q" class="form-label text-white">Cerca</label>
                             <input id="q" type="text" class="form-control p-3" placeholder="Es. check-in, studio, evento…" />
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <label for="cat" class="form-label">Categoria</label>
+                            <label for="cat" class="form-label text-white">Categoria</label>
                             <select id="cat" class="form-select p-3">
                                 <option value="all">Tutte</option>
                                 <option value="eventi">Eventi</option>
@@ -157,7 +157,7 @@ $missionCount = count($missions);
                         </div>
 
                         <div class="col-6 col-md-2">
-                            <label for="diff" class="form-label">Difficoltà</label>
+                            <label for="diff" class="form-label text-white">Difficoltà</label>
                             <select id="diff" class="form-select p-3">
                                 <option value="all">Tutte</option>
                                 <option value="facile">Facile</option>
@@ -170,7 +170,7 @@ $missionCount = count($missions);
                             <button type="button" class="btn-pixel" id="resetBtn">Reset</button>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <div class="d-grid gap-3" id="missionList">
                   <?php foreach ($missions as $m):
@@ -193,7 +193,7 @@ $missionCount = count($missions);
                       data-diff="<?php echo htmlspecialchars($diff); ?>"
                     >
                         <div class="d-flex flex-wrap justify-content-between gap-2">
-                            <p class="mission-title"><?php echo htmlspecialchars($title); ?></p>
+                            <h2 class="mission-title h6 mb-0"><?php echo htmlspecialchars($title); ?></h2>
                             <span class="mission-pill xp">+<?php echo $xp; ?> XP</span>
                         </div>
 
@@ -253,13 +253,13 @@ $missionCount = count($missions);
             <div class="container py-4">
                 <div class="row gy-3 align-items-start">
                     <div class="col-md-4">
-                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+                        <h2 class="h5 fw-bold mb-2 text-white">UniBoQuest</h2>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
                         <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <h2 class="h6 fw-bold mb-2 text-white">Navigazione</h2>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
@@ -267,12 +267,12 @@ $missionCount = count($missions);
                     </div>
 
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-                        <div class="footer-social d-flex gap-3">
+                        <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
+                        <nav class="footer-social d-flex gap-3" aria-label="Social">
                             <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                             <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
                             <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-                        </div>
+                        </nav>
                     </div>
                 </div>
 
