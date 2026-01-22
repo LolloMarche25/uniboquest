@@ -90,21 +90,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ");
 
-      $stmt->bind_param(
-        "sisssssssiisi",
-        $id,
-        $sortOrder,
-        $title,
-        $subtitle,
-        $description,
-        $category,
-        $difficulty,
-        $timeLabel,
-        $xp,
-        $requiresCheckin,
-        $checkinCode,
-        $active
-      );
+        $stmt->bind_param(
+            "sissssssiisi",
+            $id,
+            $sortOrder,
+            $title,
+            $subtitle,
+            $description,
+            $category,
+            $difficulty,
+            $timeLabel,
+            $xp,
+            $requiresCheckin,
+            $checkinCode,
+            $active
+        );
 
       if ($stmt->execute()) {
         $flashOk = "Missione creata.";
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       ");
 
       $stmt->bind_param(
-        "isssssssiisis",
+        "issssssiisis",
         $sortOrder,
         $title,
         $subtitle,
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkinCode,
         $active,
         $id
-      );
+       );
 
       if ($stmt->execute()) {
         $flashOk = "Missione aggiornata ($id).";
