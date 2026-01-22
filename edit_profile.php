@@ -314,8 +314,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </section>
 
-                    <section class="profile-section">
-                        <h3 class="profile-section-title">PREFERENZE MISSIONI</h3>
+                    <fieldset class="profile-section border-0 p-0">
+                        <legend class="profile-section-title h3 float-none w-auto">PREFERENZE MISSIONI</legend>
 
                         <div class="d-flex flex-wrap gap-3">
                             <div class="form-check">
@@ -350,48 +350,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-text mt-2">
                             (Sono preferenze iniziali: poi le useremo per personalizzare le missioni in dashboard.)
                         </div>
-                    </section>
+                    </fieldset>
 
-                    <section class="profile-section">
-                        <h3 class="profile-section-title">SCEGLI AVATAR</h3>
+                    <fieldset class="profile-section border-0 p-0">
+                        <legend class="profile-section-title h3 float-none w-auto">SCEGLI AVATAR</legend>
 
                         <div class="profile-avatar-grid" id="avatarGrid">
                             <?php
                             $avatars = [
-                                ['id' => 'avatar1', 'label' => 'Avatar 1', 'file' => 'img/avatars/avatar1.png'],
-                                ['id' => 'avatar2', 'label' => 'Avatar 2', 'file' => 'img/avatars/avatar2.png'],
-                                ['id' => 'avatar3', 'label' => 'Avatar 3', 'file' => 'img/avatars/avatar3.png'],
+                                ['id' => 'avatar1', 'label' => 'Guerriero', 'file' => 'img/avatars/avatar1.png'],
+                                ['id' => 'avatar2', 'label' => 'Mago', 'file' => 'img/avatars/avatar2.png'],
+                                ['id' => 'avatar3', 'label' => 'Esploratore', 'file' => 'img/avatars/avatar3.png'],
                             ];
                             $current = (string)($data['avatar'] ?? 'avatar3');
                             ?>
 
                             <?php foreach ($avatars as $a): ?>
-                            <label class="profile-avatar-card position-relative">
+                            <div class="position-relative">
                                 <input
                                     class="profile-avatar-radio"
                                     type="radio"
+                                    id="opt-<?php echo $a['id']; ?>"
                                     name="avatar"
                                     value="<?php echo htmlspecialchars($a['id']); ?>"
                                     <?php echo ($current === $a['id']) ? 'checked' : ''; ?>
                                     required
                                 />
-
-                                <img
-                                    src="<?php echo htmlspecialchars($a['file']); ?>"
-                                    alt="<?php echo htmlspecialchars($a['label']); ?>"
-                                    class="profile-avatar-img"
-                                    loading="lazy"
-                                />
-
-                                <span class="profile-avatar-name"><?php echo htmlspecialchars($a['label']); ?></span>
-                            </label>
+                                <label class="profile-avatar-card" for="opt-<?php echo $a['id']; ?>">
+                                    <img
+                                        src="<?php echo htmlspecialchars($a['file']); ?>"
+                                        alt="" 
+                                        class="profile-avatar-img"
+                                        loading="lazy"
+                                    />
+                                    <span class="profile-avatar-name"><?php echo htmlspecialchars($a['label']); ?></span>
+                                    <span class="visually-hidden">Seleziona avatar <?php echo htmlspecialchars($a['label']); ?></span>
+                                </label>
+                            </div>
                             <?php endforeach; ?>
                         </div>
 
                         <div class="form-text mt-2">
                             Scegli un avatar: verrà salvato nel tuo profilo.
                         </div>
-                    </section>
+                    </fieldset>
 
                     <section class="profile-section">
                         <h3 class="profile-section-title">PRIVACY</h3>
@@ -425,18 +427,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="col-md-3">
                         <h5 class="fw-bold mb-2 text-white">Navigazione</h5>
-                        <ul class="list-unstyled small mb-0">
-                            <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
-                            <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
-                        </ul>
+                        <nav aria-label="Link utili">
+                            <ul class="list-unstyled small mb-0">
+                                <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
+                                <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
+                            </ul>
+                        </nav>
                     </div>
 
                     <div class="col-md-3">
                         <h6 class="fw-bold mb-2 text-white">Seguici</h6>
                         <div class="footer-social d-flex gap-3">
-                            <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
-                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                            <a href="#" class="text-white fs-5" aria-label="Instagram"><span class="bi bi-instagram" aria-hidden="true"></span></a>
+                            <a href="#" class="text-white fs-5" aria-label="Discord"><span class="bi bi-discord" aria-hidden="true"></span></a>
+                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><span class="bi bi-github" aria-hidden="true"></span></a>
                         </div>
                     </div>
                 </div>

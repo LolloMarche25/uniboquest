@@ -277,7 +277,9 @@ if ($res) $res->close();
                 <?php endif; ?>
 
                 <section class="missioni-panel mb-3">
-                    <h2 class="font-8bit mb-3 h6" style="color:#fff;">AGGIUNGI NUOVA MISSIONE</h2>
+                    <h2 class="font-8bit mb-3 h6" style="color: #ffca2c; background-color: #1a1a1a; padding: 10px; display: inline-block; border-radius: 4px;">
+                        AGGIUNGI NUOVA MISSIONE
+                    </h2>
 
                     <form method="post" action="admin_missions.php">
                         <input type="hidden" name="action" value="create">
@@ -365,52 +367,53 @@ if ($res) $res->close();
                 <section class="d-grid gap-3">
                     <h2 class="visually-hidden">Lista Missioni Esistenti</h2>
                 <?php foreach ($missions as $m): ?>
+                    <?php $safe_id = h((string)$m['id']); ?>
                     <article class="missioni-panel">
                     <div class="d-flex flex-wrap justify-content-between gap-2">
                         <h3 class="mission-title h6 mb-0" style="color:var(--ubq-gold); font-weight:bold;">
-                            <?php echo h((string)$m['id']); ?> • <?php echo h((string)$m['title']); ?>
+                            <?php echo $safe_id; ?> • <?php echo h((string)$m['title']); ?>
                         </h3>
                         <span class="mission-badge">+<?php echo (int)$m['xp']; ?> XP</span>
                     </div>
 
                     <form method="post" action="admin_missions.php" class="mt-3">
                         <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="id" value="<?php echo h((string)$m['id']); ?>">
+                        <input type="hidden" name="id" value="<?php echo $safe_id; ?>">
 
                         <div class="row g-3">
                         <div class="col-12 col-md-2">
-                            <label class="form-label small text-white-50">Ordine</label>
-                            <input class="form-control p-2" type="number" name="sort_order" value="<?php echo (int)$m['sort_order']; ?>">
+                            <label class="form-label small text-white-50" for="sort_<?php echo $safe_id; ?>">Ordine</label>
+                            <input id="sort_<?php echo $safe_id; ?>" class="form-control p-2" type="number" name="sort_order" value="<?php echo (int)$m['sort_order']; ?>">
                         </div>
 
                         <div class="col-12 col-md-7">
-                            <label class="form-label small text-white-50">Titolo</label>
-                            <input class="form-control p-2" name="title" value="<?php echo h((string)$m['title']); ?>">
+                            <label class="form-label small text-white-50" for="title_<?php echo $safe_id; ?>">Titolo</label>
+                            <input id="title_<?php echo $safe_id; ?>" class="form-control p-2" name="title" value="<?php echo h((string)$m['title']); ?>">
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label class="form-label small text-white-50">XP</label>
-                            <input class="form-control p-2" type="number" name="xp" min="0" value="<?php echo (int)$m['xp']; ?>">
+                            <label class="form-label small text-white-50" for="xp_<?php echo $safe_id; ?>">XP</label>
+                            <input id="xp_<?php echo $safe_id; ?>" class="form-control p-2" type="number" name="xp" min="0" value="<?php echo (int)$m['xp']; ?>">
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label small text-white-50">Sottotitolo</label>
-                            <input class="form-control p-2" name="subtitle" value="<?php echo h((string)($m['subtitle'] ?? '')); ?>">
+                            <label class="form-label small text-white-50" for="sub_<?php echo $safe_id; ?>">Sottotitolo</label>
+                            <input id="sub_<?php echo $safe_id; ?>" class="form-control p-2" name="subtitle" value="<?php echo h((string)($m['subtitle'] ?? '')); ?>">
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label small text-white-50">Tempo</label>
-                            <input class="form-control p-2" name="time_label" value="<?php echo h((string)($m['time_label'] ?? '')); ?>">
+                            <label class="form-label small text-white-50" for="time_<?php echo $safe_id; ?>">Tempo</label>
+                            <input id="time_<?php echo $safe_id; ?>" class="form-control p-2" name="time_label" value="<?php echo h((string)($m['time_label'] ?? '')); ?>">
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label small text-white-50">Descrizione</label>
-                            <textarea class="form-control p-2" name="description" rows="3"><?php echo h((string)$m['description']); ?></textarea>
+                            <label class="form-label small text-white-50" for="desc_<?php echo $safe_id; ?>">Descrizione</label>
+                            <textarea id="desc_<?php echo $safe_id; ?>" class="form-control p-2" name="description" rows="3"><?php echo h((string)$m['description']); ?></textarea>
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <label class="form-label small text-white-50">Categoria</label>
-                            <select class="form-select p-2" name="category">
+                            <label class="form-label small text-white-50" for="cat_<?php echo $safe_id; ?>">Categoria</label>
+                            <select id="cat_<?php echo $safe_id; ?>" class="form-select p-2" name="category">
                             <?php foreach ($allowedCat as $c): ?>
                                 <option value="<?php echo h($c); ?>" <?php echo ($m['category'] === $c ? 'selected' : ''); ?>>
                                 <?php echo h(ucfirst($c)); ?>
@@ -420,8 +423,8 @@ if ($res) $res->close();
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <label class="form-label small text-white-50">Difficoltà</label>
-                            <select class="form-select p-2" name="difficulty">
+                            <label class="form-label small text-white-50" for="diff_<?php echo $safe_id; ?>">Difficoltà</label>
+                            <select id="diff_<?php echo $safe_id; ?>" class="form-select p-2" name="difficulty">
                             <?php foreach ($allowedDiff as $d): ?>
                                 <option value="<?php echo h($d); ?>" <?php echo ($m['difficulty'] === $d ? 'selected' : ''); ?>>
                                 <?php echo h(ucfirst($d)); ?>
@@ -433,25 +436,25 @@ if ($res) $res->close();
                         <div class="col-12 col-md-3">
                             <div class="form-check mt-4">
                             <input class="form-check-input" type="checkbox"
-                                    id="rc_<?php echo h((string)$m['id']); ?>"
+                                    id="rc_<?php echo $safe_id; ?>"
                                     name="requires_checkin"
                                     <?php echo ((int)$m['requires_checkin'] === 1 ? 'checked' : ''); ?>>
-                            <label class="form-check-label" for="rc_<?php echo h((string)$m['id']); ?>">Check-in</label>
+                            <label class="form-check-label" for="rc_<?php echo $safe_id; ?>">Check-in</label>
                             </div>
                         </div>
 
                         <div class="col-12 col-md-3">
-                            <label class="form-label small text-white-50">Codice</label>
-                            <input class="form-control p-2" name="checkin_code" value="<?php echo h((string)($m['checkin_code'] ?? '')); ?>">
+                            <label class="form-label small text-white-50" for="code_<?php echo $safe_id; ?>">Codice</label>
+                            <input id="code_<?php echo $safe_id; ?>" class="form-control p-2" name="checkin_code" value="<?php echo h((string)($m['checkin_code'] ?? '')); ?>">
                         </div>
 
                         <div class="col-6 col-md-2">
                             <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox"
-                                    id="ac_<?php echo h((string)$m['id']); ?>"
+                                    id="ac_<?php echo $safe_id; ?>"
                                     name="active"
                                     <?php echo ((int)$m['active'] === 1 ? 'checked' : ''); ?>>
-                            <label class="form-check-label" for="ac_<?php echo h((string)$m['id']); ?>">Attiva</label>
+                            <label class="form-check-label" for="ac_<?php echo $safe_id; ?>">Attiva</label>
                             </div>
                         </div>
 
@@ -465,7 +468,7 @@ if ($res) $res->close();
                         <form method="post" action="admin_missions.php"
                                 onsubmit="return confirm('Sei sicuro? Questa missione verrà eliminata definitivamente.');">
                             <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="id" value="<?php echo h((string)$m['id']); ?>">
+                            <input type="hidden" name="id" value="<?php echo $safe_id; ?>">
                             <button class="btn-pixel" type="submit">Elimina</button>
                         </form>
                     </div>
