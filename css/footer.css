@@ -32,8 +32,8 @@
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.footer-ubq h5,
-.footer-ubq h6 {
+.footer-ubq h2,
+.footer-ubq h3 {
   color: var(--ubq-gold);
 }
 
