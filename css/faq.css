@@ -28,7 +28,7 @@ body.faq-page main {
 }
 
 .faq-page .accordion-button:not(.collapsed) {
-    color: #ffea00 !important; /* Giallo UniBoQuest */
+    color: #ffea00 !important;
     box-shadow: none !important;
     background-color: rgba(255, 234, 0, 0.05) !important;
 }
