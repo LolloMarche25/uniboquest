@@ -6,7 +6,47 @@ require __DIR__ . '/includes/profile_guard.php';
 require __DIR__ . '/config/db.php';
 
 $userId = (int)$_SESSION['user_id'];
-$displayName = (string)($_SESSION['user_email'] ?? 'Player');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $action = (string)($_POST['action'] ?? '');
+  $mid = trim((string)($_POST['mission_id'] ?? ''));
+
+  if ($action === 'complete' && $mid !== '' && preg_match('/^[a-z0-9_-]{1,50}$/i', $mid)) {
+
+    $stmt = $mysqli->prepare("SELECT requires_checkin FROM missions WHERE id = ? AND active = 1 LIMIT 1");
+    $stmt->bind_param("s", $mid);
+    $stmt->execute();
+    $mrow = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $requiresCheckin = $mrow ? ((int)$mrow['requires_checkin'] === 1) : false;
+
+    if (!$requiresCheckin) {
+      $stmt = $mysqli->prepare("
+        UPDATE user_missions
+        SET status='completed', completed_at = NOW()
+        WHERE user_id = ? AND mission_id = ? AND status='active'
+      ");
+      $stmt->bind_param("is", $userId, $mid);
+      $stmt->execute();
+      $stmt->close();
+    }
+  }
+
+  header('Location: dashboard.php');
+  exit;
+}
+
+$stmt = $mysqli->prepare("SELECT nickname, display_name FROM profiles WHERE user_id = ? LIMIT 1");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$p = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+$displayName =
+    ($p && !empty($p['display_name'])) ? (string)$p['display_name'] :
+    (($p && !empty($p['nickname'])) ? (string)$p['nickname'] :
+    ((string)($_SESSION['user_email'] ?? 'Player')));
 
 $XP_PER_LEVEL = 100;
 
@@ -32,7 +72,7 @@ $activeCount = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
 $stmt->close();
 
 $stmt = $mysqli->prepare("
-  SELECT m.id, m.title
+  SELECT m.id, m.title, m.requires_checkin
   FROM user_missions um
   JOIN missions m ON m.id = um.mission_id
   WHERE um.user_id = ? AND um.status = 'active'
@@ -85,7 +125,12 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                         <ul class="navbar-nav mx-auto mb-2 mb-md-0 ubq-nav-center">
                             <li class="nav-item"><a class="nav-link active" href="dashboard.php" aria-current="page">DASHBOARD</a></li>
                             <li class="nav-item"><a class="nav-link" href="missioni.php">MISSIONI</a></li>
-                            <li class="nav-item"><a class="nav-link" href="edit_profile.php">PROFILO</a></li>
+                            <li class="nav-item"><a class="nav-link" href="profilo.php">PROFILO</a></li>
+                            <?php if (($_SESSION['user_role'] ?? 'user') === 'admin'): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="admin_missions.php">ADMIN</a>
+                                </li>
+                            <?php endif; ?>
                         </ul>
 
                         <div class="d-flex gap-2 ubq-nav-right">
@@ -212,10 +257,25 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                             <?php foreach ($activeMissions as $m): ?>
                                 <div class="dashboard-mission">
                                     <div>
-                                        <p class="dashboard-mission-title mb-1"><?php echo htmlspecialchars((string)$m['title']); ?></p>
-                                        <div class="dashboard-mission-meta">Stato: In corso</div>
+                                    <p class="dashboard-mission-title mb-1"><?php echo htmlspecialchars((string)$m['title']); ?></p>
+                                    <div class="dashboard-mission-meta">Stato: In corso</div>
                                     </div>
+
+                                    <div class="d-flex flex-wrap gap-2">
                                     <a class="btn-pixel" href="missione_dettaglio.php?id=<?php echo urlencode((string)$m['id']); ?>">Apri</a>
+
+                                    <?php if ((int)($m['requires_checkin'] ?? 0) === 1): ?>
+                                        <a class="btn-pixel-yellow" href="checkin.php?id=<?php echo urlencode((string)$m['id']); ?>">
+                                        Vai al check-in
+                                        </a>
+                                    <?php else: ?>
+                                        <form method="post" action="dashboard.php" style="display:inline;">
+                                        <input type="hidden" name="action" value="complete">
+                                        <input type="hidden" name="mission_id" value="<?php echo htmlspecialchars((string)$m['id']); ?>">
+                                        <button class="btn-pixel-yellow" type="submit">Completa</button>
+                                        </form>
+                                    <?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>

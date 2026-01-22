@@ -107,7 +107,12 @@ $missionCount = count($missions);
                         <ul class="navbar-nav mx-auto mb-2 mb-md-0 ubq-nav-center">
                             <li class="nav-item"><a class="nav-link" href="dashboard.php">DASHBOARD</a></li>
                             <li class="nav-item"><a class="nav-link active" href="missioni.php" aria-current="page">MISSIONI</a></li>
-                            <li class="nav-item"><a class="nav-link" href="edit_profile.php">PROFILO</a></li>
+                            <li class="nav-item"><a class="nav-link" href="profilo.php">PROFILO</a></li>
+                            <?php if (($_SESSION['user_role'] ?? 'user') === 'admin'): ?>
+                              <li class="nav-item">
+                                <a class="nav-link" href="admin_missions.php">ADMIN</a>
+                              </li>
+                            <?php endif; ?>
                         </ul>
 
                         <div class="d-flex gap-2 ubq-nav-right">

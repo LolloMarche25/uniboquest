@@ -4,10 +4,13 @@ declare(strict_types=1);
 require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/config/db.php';
 
-$userId = (int)$_SESSION['user_id'];
+$userId = (int)($_SESSION['user_id'] ?? 0);
+if ($userId <= 0) {
+  header("Location: login.php");
+  exit;
+}
 
 $errors = [];
-$success = false;
 
 $data = [
   'nickname' => '',
@@ -24,103 +27,125 @@ $data = [
   'privacy_public' => 0,
 ];
 
+$allowedAvatars = ['avatar1', 'avatar2', 'avatar3'];
+
+$hasProfile = false;
+
 $stmt = $mysqli->prepare("SELECT * FROM profiles WHERE user_id = ? LIMIT 1");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $res = $stmt->get_result();
 if ($row = $res->fetch_assoc()) {
-    foreach ($data as $k => $v) {
-        if (array_key_exists($k, $row)) {
-            $data[$k] = $row[$k] ?? $v;
-        }
+  $hasProfile = true;
+  foreach ($data as $k => $v) {
+    if (array_key_exists($k, $row) && $row[$k] !== null) {
+      $data[$k] = $row[$k];
     }
+  }
 }
 $stmt->close();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Leggi input
-    $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
-    $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
-    $data['course'] = trim((string)($_POST['course'] ?? ''));
-    $data['year_label'] = trim((string)($_POST['year'] ?? ''));
-    $data['campus'] = trim((string)($_POST['campus'] ?? ''));
-    $data['bio'] = trim((string)($_POST['bio'] ?? ''));
-    $data['avatar'] = trim((string)($_POST['avatar'] ?? 'sprinter'));
+  $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
+  $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
+  $data['course'] = trim((string)($_POST['course'] ?? ''));
+  $data['year_label'] = trim((string)($_POST['year'] ?? ''));
+  $data['campus'] = trim((string)($_POST['campus'] ?? ''));
+  $data['bio'] = trim((string)($_POST['bio'] ?? ''));
 
-    $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
-    $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
-    $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
-    $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
-    $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
+  $avatar = trim((string)($_POST['avatar'] ?? 'avatar3'));
+  $data['avatar'] = in_array($avatar, $allowedAvatars, true) ? $avatar : 'avatar3';
 
-    if ($data['nickname'] === '' || strlen($data['nickname']) < 3) {
-        $errors[] = "Nickname obbligatorio (min 3 caratteri).";
+  $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
+  $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
+  $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
+  $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
+  $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
+
+  if ($data['nickname'] === '' || mb_strlen($data['nickname']) < 3) {
+    $errors[] = "Nickname obbligatorio (min 3 caratteri).";
+  }
+  if (mb_strlen($data['nickname']) > 32) {
+    $errors[] = "Nickname troppo lungo (max 32).";
+  }
+  if (mb_strlen($data['display_name']) > 60) {
+    $errors[] = "Nome visualizzato troppo lungo (max 60).";
+  }
+  if (mb_strlen($data['course']) > 80) {
+    $errors[] = "Corso di laurea troppo lungo (max 80).";
+  }
+  if (mb_strlen($data['year_label']) > 20) {
+    $errors[] = "Anno troppo lungo (max 20).";
+  }
+  if (mb_strlen($data['campus']) > 40) {
+    $errors[] = "Campus troppo lungo (max 40).";
+  }
+  if (mb_strlen($data['bio']) > 255) {
+    $errors[] = "Bio troppo lunga (max 255).";
+  }
+
+  if (!$errors) {
+    $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
+    $stmt->bind_param("si", $data['nickname'], $userId);
+    $stmt->execute();
+    $dup = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if ($dup) {
+      $errors[] = "Nickname già in uso. Scegline un altro.";
     }
-    if (strlen($data['nickname']) > 32) {
-        $errors[] = "Nickname troppo lungo (max 32).";
+  }
+
+  if (!$errors) {
+    $sql = "
+      INSERT INTO profiles
+        (user_id, nickname, display_name, course, year_label, campus, bio,
+         pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
+      VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        nickname=VALUES(nickname),
+        display_name=VALUES(display_name),
+        course=VALUES(course),
+        year_label=VALUES(year_label),
+        campus=VALUES(campus),
+        bio=VALUES(bio),
+        pref_events=VALUES(pref_events),
+        pref_study=VALUES(pref_study),
+        pref_sport=VALUES(pref_sport),
+        pref_social=VALUES(pref_social),
+        avatar=VALUES(avatar),
+        privacy_public=VALUES(privacy_public)
+    ";
+
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param(
+      "issssssiiiisi",
+      $userId,
+      $data['nickname'],
+      $data['display_name'],
+      $data['course'],
+      $data['year_label'],
+      $data['campus'],
+      $data['bio'],
+      $data['pref_events'],
+      $data['pref_study'],
+      $data['pref_sport'],
+      $data['pref_social'],
+      $data['avatar'],
+      $data['privacy_public']
+    );
+
+    if ($stmt->execute()) {
+      $stmt->close();
+
+      header("Location: dashboard.php");
+      exit;
     }
-    if (strlen($data['bio']) > 255) {
-        $errors[] = "Bio troppo lunga (max 255).";
-    }
 
-    if (!$errors) {
-        $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
-        $stmt->bind_param("si", $data['nickname'], $userId);
-        $stmt->execute();
-        $dup = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-        if ($dup) {
-            $errors[] = "Nickname già in uso. Scegline un altro.";
-        }
-    }
-
-    if (!$errors) {
-        $sql = "INSERT INTO profiles
-            (user_id, nickname, display_name, course, year_label, campus, bio,
-             pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-              nickname=VALUES(nickname),
-              display_name=VALUES(display_name),
-              course=VALUES(course),
-              year_label=VALUES(year_label),
-              campus=VALUES(campus),
-              bio=VALUES(bio),
-              pref_events=VALUES(pref_events),
-              pref_study=VALUES(pref_study),
-              pref_sport=VALUES(pref_sport),
-              pref_social=VALUES(pref_social),
-              avatar=VALUES(avatar),
-              privacy_public=VALUES(privacy_public)";
-
-        $stmt = $mysqli->prepare($sql);
-
-        $stmt->bind_param(
-            "issssssiiiisi",
-            $userId,
-            $data['nickname'],
-            $data['display_name'],
-            $data['course'],
-            $data['year_label'],
-            $data['campus'],
-            $data['bio'],
-            $data['pref_events'],
-            $data['pref_study'],
-            $data['pref_sport'],
-            $data['pref_social'],
-            $data['avatar'],
-            $data['privacy_public']
-        );
-
-        if ($stmt->execute()) {
-            $stmt->close();
-            header("Location: dashboard.php");
-            exit;
-        }
-
-        $stmt->close();
-        $errors[] = "Errore nel salvataggio profilo. Riprova.";
-    }
+    $stmt->close();
+    $errors[] = "Errore nel salvataggio profilo. Riprova.";
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -147,7 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="container-fluid">
                     <a class="navbar-brand font-8bit" href="dashboard.php" aria-label="UniBoQuest Dashboard">UniBoQuest</a>
 
-                    <!-- Titolo onboarding (sempre visibile) -->
                     <div class="mx-auto d-none d-md-block">
                         <span class="font-8bit text-white" style="font-size: 0.9rem; opacity: 0.95;">
                             COMPLETA IL TUO PROFILO
@@ -185,8 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <p class="profile-hint">
-                    Ultimo passo: scegli come comparirai in UniBoQuest. (Pagina statica, poi la colleghiamo al PHP)
-                </p>
+                    Ultimo passo: scegli come comparirai in UniBoQuest.</p>
 
                 <form action="edit_profile.php" method="post" id="profileForm">
                     <section class="profile-section">
@@ -205,8 +228,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     minlength="3"
                                     pattern=".*\S.*"
                                     autocomplete="nickname"
+                                    value="<?php echo htmlspecialchars((string)$data['nickname']); ?>"
                                 />
-                                <div class="form-text">Questo sarà visibile agli altri (se attivi la visibilità profilo).</div>
+                                <div class="form-text">Questo sarà visibile agli altri.</div>
                             </div>
 
                             <div class="col-12 col-md-6">
@@ -218,6 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     class="form-control p-3"
                                     placeholder="Es. Lorenzo M."
                                     autocomplete="name"
+                                    value="<?php echo htmlspecialchars((string)$data['display_name']); ?>"
                                 />
                                 <div class="form-text">Se lo lasci vuoto, useremo il nickname.</div>
                             </div>
@@ -231,40 +256,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="col-12 col-md-6">
                                 <label for="course" class="form-label">Corso di laurea</label>
                                 <select id="course" name="course" class="form-select p-3">
-                                    <option value="">Seleziona…</option>
-                                    <option>Informatica</option>
-                                    <option>Ingegneria</option>
-                                    <option>Economia</option>
-                                    <option>Medicina</option>
-                                    <option>Giurisprudenza</option>
-                                    <option>Altro</option>
+                                    <option value="" <?php echo ($data['course']==='' ? 'selected' : ''); ?>>Seleziona…</option>
+                                    <option value="Informatica" <?php echo ($data['course']==='Informatica' ? 'selected' : ''); ?>>Informatica</option>
+                                    <option value="Ingegneria"  <?php echo ($data['course']==='Ingegneria'  ? 'selected' : ''); ?>>Ingegneria</option>
+                                    <option value="Economia"    <?php echo ($data['course']==='Economia'    ? 'selected' : ''); ?>>Economia</option>
+                                    <option value="Medicina"    <?php echo ($data['course']==='Medicina'    ? 'selected' : ''); ?>>Medicina</option>
+                                    <option value="Giurisprudenza" <?php echo ($data['course']==='Giurisprudenza' ? 'selected' : ''); ?>>Giurisprudenza</option>
+                                    <option value="Altro"       <?php echo ($data['course']==='Altro'       ? 'selected' : ''); ?>>Altro</option>
                                 </select>
                             </div>
 
                             <div class="col-6 col-md-3">
                                 <label for="year" class="form-label">Anno</label>
                                 <select id="year" name="year" class="form-select p-3">
-                                    <option value="">—</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>Fuori corso</option>
+                                    <option value="" <?php echo ($data['year_label']==='' ? 'selected' : ''); ?>>—</option>
+                                    <option value="1" <?php echo ($data['year_label']==='1' ? 'selected' : ''); ?>>1</option>
+                                    <option value="2" <?php echo ($data['year_label']==='2' ? 'selected' : ''); ?>>2</option>
+                                    <option value="3" <?php echo ($data['year_label']==='3' ? 'selected' : ''); ?>>3</option>
+                                    <option value="4" <?php echo ($data['year_label']==='4' ? 'selected' : ''); ?>>4</option>
+                                    <option value="5" <?php echo ($data['year_label']==='5' ? 'selected' : ''); ?>>5</option>
+                                    <option value="Fuori corso" <?php echo ($data['year_label']==='Fuori corso' ? 'selected' : ''); ?>>Fuori corso</option>
                                 </select>
                             </div>
 
                             <div class="col-6 col-md-3">
                                 <label for="campus" class="form-label">Campus</label>
                                 <select id="campus" name="campus" class="form-select p-3">
-                                    <option value="">—</option>
-                                    <option>Bologna</option>
-                                    <option>Cesena</option>
-                                    <option>Forlì</option>
-                                    <option>Ravenna</option>
-                                    <option>Rimini</option>
+                                    <option value="" <?php echo ($data['campus']==='' ? 'selected' : ''); ?>>—</option>
+                                    <option value="Bologna" <?php echo ($data['campus']==='Bologna' ? 'selected' : ''); ?>>Bologna</option>
+                                    <option value="Cesena"  <?php echo ($data['campus']==='Cesena'  ? 'selected' : ''); ?>>Cesena</option>
+                                    <option value="Forlì"   <?php echo ($data['campus']==='Forlì'   ? 'selected' : ''); ?>>Forlì</option>
+                                    <option value="Ravenna" <?php echo ($data['campus']==='Ravenna' ? 'selected' : ''); ?>>Ravenna</option>
+                                    <option value="Rimini"  <?php echo ($data['campus']==='Rimini'  ? 'selected' : ''); ?>>Rimini</option>
                                 </select>
                             </div>
+
 
                             <div class="col-12">
                                 <label for="bio" class="form-label">Bio (breve)</label>
@@ -274,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     class="form-control p-3"
                                     rows="3"
                                     placeholder="Es. 'Cacciatore di XP tra una lezione e l'altra'"
-                                ></textarea>
+                                ><?php echo htmlspecialchars((string)$data['bio']); ?></textarea>
                             </div>
                         </div>
                     </section>
@@ -284,22 +310,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="d-flex flex-wrap gap-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pref_events" name="pref_events" />
+                                <input class="form-check-input" type="checkbox" id="pref_events" name="pref_events" 
+                                <?php echo ((int)$data['pref_events'] === 1) ? 'checked' : ''; ?>
+                                />
                                 <label class="form-check-label" for="pref_events">Eventi</label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pref_study" name="pref_study" />
+                                <input class="form-check-input" type="checkbox" id="pref_study" name="pref_study" 
+                                 <?php echo ((int)$data['pref_study'] === 1) ? 'checked' : ''; ?>
+                                />
                                 <label class="form-check-label" for="pref_study">Studio</label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pref_sport" name="pref_sport" />
+                                <input class="form-check-input" type="checkbox" id="pref_sport" name="pref_sport" 
+                                 <?php echo ((int)$data['pref_sport'] === 1) ? 'checked' : ''; ?>
+                                />
                                 <label class="form-check-label" for="pref_sport">Sport</label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pref_social" name="pref_social" />
+                                <input class="form-check-input" type="checkbox" id="pref_social" name="pref_social" 
+                                 <?php echo ((int)$data['pref_social'] === 1) ? 'checked' : ''; ?>
+                                />
                                 <label class="form-check-label" for="pref_social">Social</label>
                             </div>
                         </div>
@@ -354,7 +388,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h3 class="profile-section-title">PRIVACY</h3>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="privacy_public" name="privacy_public" />
+                            <input class="form-check-input" type="checkbox" id="privacy_public" name="privacy_public" 
+                             <?php echo ((int)$data['privacy_public'] === 1) ? 'checked' : ''; ?>
+                            />
                             <label class="form-check-label" for="privacy_public">
                                 Rendi visibile il mio profilo (nickname + livello) agli altri studenti
                             </label>
@@ -362,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </section>
 
                     <div class="profile-actions">
-                        <a class="btn-pixel" href="registrazione.php">Indietro</a>
+                        <a class="btn-pixel" href="<?php echo (($_GET['from'] ?? '') === 'profile') ? 'profilo.php' : 'registrazione.php'; ?>">Indietro</a>
                         <button type="submit" class="btn-pixel-yellow">Salva e vai alla dashboard</button>
                     </div>
                 </form>

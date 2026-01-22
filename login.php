@@ -35,21 +35,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $mysqli->prepare("SELECT id, email, password_hash FROM users WHERE email = ? LIMIT 1");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->bind_result($id, $emailDb, $passwordHashDb);
+$stmt = $mysqli->prepare("SELECT id, email, password_hash, role FROM users WHERE email = ? LIMIT 1");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->bind_result($id, $emailDb, $passwordHashDb, $roleDb);
 
-        $found = $stmt->fetch();
-        $stmt->close();
+$found = $stmt->fetch();
+$stmt->close();
 
         if (!$found || !password_verify($password, (string)$passwordHashDb)) {
             $errors[] = "Credenziali non valide.";
         } else {
+            session_regenerate_id(true);
+
             $_SESSION['user_id'] = (int)$id;
             $_SESSION['user_email'] = (string)$emailDb;
-
-            session_regenerate_id(true);
+            $_SESSION['user_role'] = !empty($roleDb) ? (string)$roleDb : 'user';
 
             $stmt = $mysqli->prepare("SELECT 1 FROM profiles WHERE user_id = ? LIMIT 1");
             $userId = (int)$id;

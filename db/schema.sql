@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
+
+  role ENUM('user','admin') NOT NULL DEFAULT 'user',
+
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -25,7 +28,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   UNIQUE KEY uq_profiles_nickname (nickname),
-  
+
   CONSTRAINT fk_profiles_user
     FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE
@@ -65,6 +68,7 @@ VALUES
  'Completa un circuito leggero da 15 minuti. Nel prototipo, la prova è simulata.',
  'sport', 'difficile', '15 min', 70, 0, NULL, 1)
 ON DUPLICATE KEY UPDATE
+  sort_order=VALUES(sort_order),
   title=VALUES(title),
   subtitle=VALUES(subtitle),
   description=VALUES(description),
@@ -84,5 +88,7 @@ CREATE TABLE IF NOT EXISTS user_missions (
   completed_at TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (user_id, mission_id),
   CONSTRAINT fk_um_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_um_mission FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE
+  CONSTRAINT fk_um_mission FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE,
+
+  KEY idx_um_user_status (user_id, status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
