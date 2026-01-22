@@ -249,13 +249,13 @@ function h(string $s): string {
       <div class="container py-4">
         <div class="row gy-3 align-items-start">
           <div class="col-md-4">
-            <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+            <h4 class="fw-bold mb-2 text-white">UniBoQuest</h4>
             <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
             <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
           </div>
 
           <div class="col-md-3">
-            <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+            <h5 class="fw-bold mb-2 text-white">Navigazione</h5>
             <ul class="list-unstyled small mb-0">
               <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
               <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>

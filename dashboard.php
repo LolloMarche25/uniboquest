@@ -145,7 +145,7 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
             <div class="dashboard-card">
                 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
                     <div>
-                        <h2 class="dashboard-title font-8bit" style="font-size: 1.15rem;">DASHBOARD</h2>
+                        <h1 class="dashboard-title font-8bit h2" style="font-size: 1.15rem;">DASHBOARD</h1>
                         <p class="dashboard-subtitle mb-0">
                             Bentornato, <strong><?php echo htmlspecialchars($displayName); ?></strong>!
                         </p>
@@ -178,7 +178,6 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                                 aria-valuenow="<?php echo (int)$pct; ?>" aria-valuemin="0" aria-valuemax="100">
                                 <div class="progress-bar" style="width: <?php echo (int)$pct; ?>%"></div>
                             </div>
-
                         </div>
                     </div>
 
@@ -207,7 +206,7 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
 
                 <div class="mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h3 class="font-8bit mb-0" style="font-size: 0.95rem; color: #fff;">MISSIONI CONSIGLIATE</h3>
+                        <h2 class="font-8bit mb-0 h3" style="font-size: 0.95rem; color: #fff;">MISSIONI CONSIGLIATE</h2>
                         <a class="dashboard-badge text-decoration-none" href="missioni.php">VEDI TUTTE</a>
                     </div>
 
@@ -240,7 +239,7 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
 
                 <div class="mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h3 class="font-8bit mb-0" style="font-size: 0.95rem; color: #fff;">LE TUE MISSIONI ATTIVE</h3>
+                        <h2 class="font-8bit mb-0 h3" style="font-size: 0.95rem; color: #fff;">LE TUE MISSIONI ATTIVE</h2>
                         <a class="dashboard-badge text-decoration-none" href="missioni.php">GESTISCI</a>
                     </div>
 
@@ -288,13 +287,13 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
             <div class="container py-4">
                 <div class="row gy-3 align-items-start">
                     <div class="col-md-4">
-                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+                        <h2 class="h5 fw-bold mb-2 text-white">UniBoQuest</h2>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
                         <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <h2 class="h6 fw-bold mb-2 text-white">Navigazione</h2>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
@@ -302,12 +301,12 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                     </div>
 
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-                        <div class="footer-social d-flex gap-3">
+                        <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
+                        <nav class="footer-social d-flex gap-3" aria-label="Social Link">
                             <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                             <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
                             <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-                        </div>
+                        </nav>
                     </div>
                 </div>
 
