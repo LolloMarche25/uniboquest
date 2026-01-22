@@ -1,9 +1,19 @@
 /* =========================
-   RESPONSIVE: NAV + FOOTER
+   RESPONSIVE: NAV + FOOTER (mobile-first)
    ========================= */
 
-@media (min-width: 768px) {
+/* Base mobile - navbar toggler visibile e nav linksx smaller padding */
+.ubq-nav-center .nav-link {
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+}
 
+.ubq-nav-right {
+  flex-wrap: wrap;
+}
+
+/* Tablet e desktop (min-width 768px) - espandi nav */
+@media (min-width: 768px) {
   .ubq-nav-center .nav-link {
     padding-left: 1.2rem;
     padding-right: 1.2rem;
@@ -12,9 +22,6 @@
   .ubq-nav-right {
     min-width: 220px;
     justify-content: flex-end;
+    flex-wrap: nowrap;
   }
-
-  .footer-ubq { text-align: left; }
-  .footer-social { justify-content: flex-start; }
-  .footer-ubq .footer-nav ul { text-align: left; }
 }

@@ -37,19 +37,20 @@ body.home-page {
     opacity: 0.6;
 }
 
+/* MOBILE-FIRST: Copy e buttons stackati verticalmente */
 .hero-ubq-copy {
-    position: absolute;
-    top: 15%; left: 5%; width: 42%;
+    position: static;
     background: rgba(0, 0, 0, 0.9);
     border-left: 4px solid #ffea00;
     padding: 25px;
     z-index: 10;
+    width: 100%;
 }
 
 .hero-ubq-title {
     color: #ffea00;
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin-bottom: 15px;
     text-shadow: 2px 2px 0 rgba(0,0,0,.8);
 }
@@ -57,25 +58,30 @@ body.home-page {
 .hero-ubq-subtitle {
     color: rgba(255,255,255,.85);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     line-height: 1.5;
 }
 
 .hero-ubq-monitor {
-    position: absolute;
-    top: 28.5%; left: 66.8%; width: 24.5%; height: 35.5%;
-    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px;
+    position: static;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
     z-index: 11;
+    padding: 20px 0;
 }
 
 .btn-os-home {
     background: transparent;
     color: #ffffff;
-    border: 1px solid #ffffff;
+    border: 2px solid #ffffff;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
-    padding: 10px 0;
-    width: 85%;
+    font-size: 0.72rem;
+    padding: 12px 0;
+    width: 92%;
     transition: 0.2s;
     text-decoration: none;
     text-align: center;
@@ -94,26 +100,48 @@ body.home-page {
 .hero-ubq-monitor-title {
   font-family: 'Press Start 2P', cursive;
   color: #ffea00;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-align: center;
   text-shadow: 2px 2px 0 rgba(0,0,0,.8);
   margin-bottom: 10px;
 }
 
-@media (max-width: 767.98px) {
+/* TABLET+: Torna al layout posizionato */
+@media (min-width: 768px) {
+  .hero-ubq-title {
+    font-size: 1.4rem;
+  }
+
+  .hero-ubq-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-ubq-copy {
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    width: 42%;
+    padding: 25px;
+  }
 
   .hero-ubq-monitor {
-    top: 19.14%;
-    left: 16.55%;
-    width: 67.03%;
-    height: 34.84%;
-    gap: 12px;
+    position: absolute;
+    top: 28.5%;
+    left: 66.8%;
+    width: 24.5%;
+    height: 35.5%;
+    gap: 10px;
+    padding: 0;
   }
 
   .btn-os-home {
-    font-size: 0.72rem;
-    padding: 12px 0;
-    width: 92%;
-    border-width: 2px;
+    font-size: 0.6rem;
+    padding: 10px 0;
+    width: 85%;
+    border-width: 1px;
+  }
+
+  .hero-ubq-monitor-title {
+    font-size: 0.85rem;
   }
 }

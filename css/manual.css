@@ -1,5 +1,5 @@
 /* ========================================================== */
-/* PAGINA: IL GIOCO (MANUALE) – manual.css                   */
+/* PAGINA: IL GIOCO (MANUALE) – manual.css (MOBILE-FIRST)   */
 /* ========================================================== */
 
 .manual-bg {
@@ -16,71 +16,94 @@
   color: rgba(255,255,255,.85) !important;
 }
 
+/* MOBILE-FIRST: stack verticale, no flexbox complesso */
 .book-viewport {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
+  display: block;
+  padding: 20px 10px;
   width: 100%;
 }
 
 .book {
   position: relative;
-  height: min(75vh, 850px);
-  aspect-ratio: 621 / 915;
+  height: auto;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
   transform-style: preserve-3d;
-  transform: translateX(50%); 
+  transform: none;
   transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .book.closed {
-  transform: translateX(0) !important;
+  transform: none !important;
 }
 
 .page {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: auto;
   transform-origin: left;
   transform-style: preserve-3d;
   transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  display: none;
+}
+
+.page[data-active="true"] {
+  display: block;
 }
 
 .page.flipped {
-  transform: rotateY(-180deg);
+  transform: none;
 }
 
 .front, .back {
-  position: absolute;
-  width: 100%; height: 100%;
-  backface-visibility: hidden;
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 400px;
+  backface-visibility: visible;
   background: #e8e8e8;
-  border: 10px solid #000;
-  padding: 25px;
-  box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
+  border: 8px solid #000;
+  padding: 20px;
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  transform: none;
 }
 
 .back {
-  transform: rotateY(180deg);
+  transform: none;
   background-color: #dcdcdc;
+  display: none;
+}
+
+.page[data-face="1"] .back {
+  display: flex;
+}
+
+.page[data-face="1"] .front {
+  display: none;
 }
 
 .page-num {
-  position: absolute;
-  bottom: 20px;
-  right: 25px;
+  position: relative;
+  bottom: auto;
+  right: auto;
+  left: auto;
+  display: block;
+  text-align: right;
+  margin-top: 15px;
   font-family: "Press Start 2P", monospace;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: #000;
 }
-.back .page-num { right: auto; left: 25px; }
 
 .section-hdr {
   font-family: "Press Start 2P";
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   background: #ffea00;
   color: #000 !important;
   padding: 5px 10px;
@@ -125,59 +148,79 @@
 .full-image-cover { padding: 0 !important; border: none !important; }
 .cover-art-full { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
 
-@media (max-width: 1024px) {
+/* DESKTOP (1024px+): Torna al layout originale con 3D effect */
+@media (min-width: 1024px) {
   .book-viewport {
-    display: block;
-    padding: 20px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
   }
 
   .book {
-    transform: none !important;
-    width: 100% !important;
-    max-width: 500px; 
-    height: auto !important;
-    margin: 0 auto;
-    aspect-ratio: auto !important;
+    height: min(75vh, 850px);
+    aspect-ratio: 621 / 915;
+    max-width: none;
+    transform: translateX(50%);
+    width: auto;
   }
 
-  .page.manual-mobile {
-    position: relative !important;
-    display: none; 
-    width: 100% !important;
-    height: auto !important;
-    transform: none !important;
+  .page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: block;
   }
 
-  .page.manual-mobile[data-active="true"] {
-    display: block !important;
+  .page.flipped {
+    transform: rotateY(-180deg);
   }
 
   .front, .back {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 400px;
-    transform: none !important;
-    backface-visibility: visible !important;
-    display: block !important;
-    padding: 20px;
-    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
-    border-width: 8px;
+    position: absolute;
+    height: 100%;
+    min-height: auto;
+    padding: 25px;
+    border-width: 10px;
+    box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
+    transform: none;
   }
 
-  .page.manual-mobile[data-face="0"] .back { display: none !important; }
-  .page.manual-mobile[data-face="1"] .front { display: none !important; }
+  .back {
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    display: flex;
+  }
 
-  .section-hdr {
-    font-size: 0.85rem;
+  .front {
+    backface-visibility: hidden;
+  }
+
+  .page[data-face="0"] .back,
+  .page[data-face="1"] .front {
+    display: none;
+  }
+
+  .page[data-face="1"] .back {
+    display: flex;
   }
 
   .page-num {
-    position: relative !important;
-    bottom: auto; right: auto;
-    display: block;
-    text-align: right;
-    margin-top: 15px;
-    font-size: 0.65rem;
+    position: absolute;
+    bottom: 20px;
+    right: 25px;
+    margin-top: 0;
+    font-size: 0.7rem;
+    text-align: auto;
+  }
+
+  .back .page-num {
+    right: auto;
+    left: 25px;
+  }
+
+  .section-hdr {
+    font-size: 0.9rem;
   }
 }
