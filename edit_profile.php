@@ -6,25 +6,25 @@ require __DIR__ . '/config/db.php';
 
 $userId = (int)($_SESSION['user_id'] ?? 0);
 if ($userId <= 0) {
-  header("Location: login.php");
-  exit;
+    header("Location: login.php");
+    exit;
 }
 
 $errors = [];
 
 $data = [
-  'nickname' => '',
-  'display_name' => '',
-  'course' => '',
-  'year_label' => '',
-  'campus' => '',
-  'bio' => '',
-  'pref_events' => 0,
-  'pref_study' => 0,
-  'pref_sport' => 0,
-  'pref_social' => 0,
-  'avatar' => 'avatar3',
-  'privacy_public' => 0,
+    'nickname' => '',
+    'display_name' => '',
+    'course' => '',
+    'year_label' => '',
+    'campus' => '',
+    'bio' => '',
+    'pref_events' => 0,
+    'pref_study' => 0,
+    'pref_sport' => 0,
+    'pref_social' => 0,
+    'avatar' => 'avatar3',
+    'privacy_public' => 0,
 ];
 
 $allowedAvatars = ['avatar1', 'avatar2', 'avatar3'];
@@ -36,116 +36,115 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 $res = $stmt->get_result();
 if ($row = $res->fetch_assoc()) {
-  $hasProfile = true;
-  foreach ($data as $k => $v) {
-    if (array_key_exists($k, $row) && $row[$k] !== null) {
-      $data[$k] = $row[$k];
+    $hasProfile = true;
+    foreach ($data as $k => $v) {
+        if (array_key_exists($k, $row) && $row[$k] !== null) {
+            $data[$k] = $row[$k];
+        }
     }
-  }
 }
 $stmt->close();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
-  $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
-  $data['course'] = trim((string)($_POST['course'] ?? ''));
-  $data['year_label'] = trim((string)($_POST['year'] ?? ''));
-  $data['campus'] = trim((string)($_POST['campus'] ?? ''));
-  $data['bio'] = trim((string)($_POST['bio'] ?? ''));
+    $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
+    $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
+    $data['course'] = trim((string)($_POST['course'] ?? ''));
+    $data['year_label'] = trim((string)($_POST['year'] ?? ''));
+    $data['campus'] = trim((string)($_POST['campus'] ?? ''));
+    $data['bio'] = trim((string)($_POST['bio'] ?? ''));
 
-  $avatar = trim((string)($_POST['avatar'] ?? 'avatar3'));
-  $data['avatar'] = in_array($avatar, $allowedAvatars, true) ? $avatar : 'avatar3';
+    $avatar = trim((string)($_POST['avatar'] ?? 'avatar3'));
+    $data['avatar'] = in_array($avatar, $allowedAvatars, true) ? $avatar : 'avatar3';
 
-  $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
-  $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
-  $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
-  $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
-  $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
+    $data['pref_events'] = isset($_POST['pref_events']) ? 1 : 0;
+    $data['pref_study']  = isset($_POST['pref_study'])  ? 1 : 0;
+    $data['pref_sport']  = isset($_POST['pref_sport'])  ? 1 : 0;
+    $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
+    $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
 
-  if ($data['nickname'] === '' || mb_strlen($data['nickname']) < 3) {
-    $errors[] = "Nickname obbligatorio (min 3 caratteri).";
-  }
-  if (mb_strlen($data['nickname']) > 32) {
-    $errors[] = "Nickname troppo lungo (max 32).";
-  }
-  if (mb_strlen($data['display_name']) > 60) {
-    $errors[] = "Nome visualizzato troppo lungo (max 60).";
-  }
-  if (mb_strlen($data['course']) > 80) {
-    $errors[] = "Corso di laurea troppo lungo (max 80).";
-  }
-  if (mb_strlen($data['year_label']) > 20) {
-    $errors[] = "Anno troppo lungo (max 20).";
-  }
-  if (mb_strlen($data['campus']) > 40) {
-    $errors[] = "Campus troppo lungo (max 40).";
-  }
-  if (mb_strlen($data['bio']) > 255) {
-    $errors[] = "Bio troppo lunga (max 255).";
-  }
-
-  if (!$errors) {
-    $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
-    $stmt->bind_param("si", $data['nickname'], $userId);
-    $stmt->execute();
-    $dup = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-
-    if ($dup) {
-      $errors[] = "Nickname già in uso. Scegline un altro.";
+    if ($data['nickname'] === '' || mb_strlen($data['nickname']) < 3) {
+        $errors[] = "Nickname obbligatorio (min 3 caratteri).";
     }
-  }
-
-  if (!$errors) {
-    $sql = "
-      INSERT INTO profiles
-        (user_id, nickname, display_name, course, year_label, campus, bio,
-         pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
-      VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        nickname=VALUES(nickname),
-        display_name=VALUES(display_name),
-        course=VALUES(course),
-        year_label=VALUES(year_label),
-        campus=VALUES(campus),
-        bio=VALUES(bio),
-        pref_events=VALUES(pref_events),
-        pref_study=VALUES(pref_study),
-        pref_sport=VALUES(pref_sport),
-        pref_social=VALUES(pref_social),
-        avatar=VALUES(avatar),
-        privacy_public=VALUES(privacy_public)
-    ";
-
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param(
-      "issssssiiiisi",
-      $userId,
-      $data['nickname'],
-      $data['display_name'],
-      $data['course'],
-      $data['year_label'],
-      $data['campus'],
-      $data['bio'],
-      $data['pref_events'],
-      $data['pref_study'],
-      $data['pref_sport'],
-      $data['pref_social'],
-      $data['avatar'],
-      $data['privacy_public']
-    );
-
-    if ($stmt->execute()) {
-      $stmt->close();
-
-      header("Location: dashboard.php");
-      exit;
+    if (mb_strlen($data['nickname']) > 32) {
+        $errors[] = "Nickname troppo lungo (max 32).";
+    }
+    if (mb_strlen($data['display_name']) > 60) {
+        $errors[] = "Nome visualizzato troppo lungo (max 60).";
+    }
+    if (mb_strlen($data['course']) > 80) {
+        $errors[] = "Corso di laurea troppo lungo (max 80).";
+    }
+    if (mb_strlen($data['year_label']) > 20) {
+        $errors[] = "Anno troppo lungo (max 20).";
+    }
+    if (mb_strlen($data['campus']) > 40) {
+        $errors[] = "Campus troppo lungo (max 40).";
+    }
+    if (mb_strlen($data['bio']) > 255) {
+        $errors[] = "Bio troppo lunga (max 255).";
     }
 
-    $stmt->close();
-    $errors[] = "Errore nel salvataggio profilo. Riprova.";
-  }
+    if (!$errors) {
+        $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
+        $stmt->bind_param("si", $data['nickname'], $userId);
+        $stmt->execute();
+        $dup = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if ($dup) {
+            $errors[] = "Nickname già in uso. Scegline un altro.";
+        }
+    }
+
+    if (!$errors) {
+        $sql = "
+            INSERT INTO profiles
+                (user_id, nickname, display_name, course, year_label, campus, bio,
+                 pref_events, pref_study, pref_sport, pref_social, avatar, privacy_public)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                nickname=VALUES(nickname),
+                display_name=VALUES(display_name),
+                course=VALUES(course),
+                year_label=VALUES(year_label),
+                campus=VALUES(campus),
+                bio=VALUES(bio),
+                pref_events=VALUES(pref_events),
+                pref_study=VALUES(pref_study),
+                pref_sport=VALUES(pref_sport),
+                pref_social=VALUES(pref_social),
+                avatar=VALUES(avatar),
+                privacy_public=VALUES(privacy_public)
+        ";
+
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param(
+            "issssssiiiisi",
+            $userId,
+            $data['nickname'],
+            $data['display_name'],
+            $data['course'],
+            $data['year_label'],
+            $data['campus'],
+            $data['bio'],
+            $data['pref_events'],
+            $data['pref_study'],
+            $data['pref_sport'],
+            $data['pref_social'],
+            $data['avatar'],
+            $data['privacy_public']
+        );
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            header("Location: dashboard.php");
+            exit;
+        }
+
+        $stmt->close();
+        $errors[] = "Errore nel salvataggio profilo. Riprova.";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -208,8 +207,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <span class="profile-step-badge">STEP 2/2</span>
                 </div>
 
-                <p class="profile-hint">
-                    Ultimo passo: scegli come comparirai in UniBoQuest.</p>
+                <?php if ($errors): ?>
+                    <div class="alert alert-danger mt-3">
+                        <ul class="mb-0">
+                            <?php foreach ($errors as $err): ?>
+                                <li><?php echo htmlspecialchars($err); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+
+                <p class="profile-hint mt-3">
+                    Ultimo passo: scegli come comparirai in UniBoQuest.
+                </p>
 
                 <form action="edit_profile.php" method="post" id="profileForm">
                     <section class="profile-section">
@@ -234,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label for="display_name" class="form-label">Nome visualizzato</label>
+                                <label for="display_name" class="form-label">Nome studente</label>
                                 <input
                                     type="text"
                                     id="display_name"
@@ -291,7 +301,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </select>
                             </div>
 
-
                             <div class="col-12">
                                 <label for="bio" class="form-label">Bio (breve)</label>
                                 <textarea
@@ -344,44 +353,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </section>
 
                     <section class="profile-section">
-                    <h3 class="profile-section-title">SCEGLI AVATAR</h3>
+                        <h3 class="profile-section-title">SCEGLI AVATAR</h3>
 
-                    <div class="profile-avatar-grid" id="avatarGrid">
-                        <?php
-                        $avatars = [
-                            ['id' => 'avatar1', 'label' => 'Avatar 1', 'file' => 'img/avatars/avatar1.png'],
-                            ['id' => 'avatar2', 'label' => 'Avatar 2', 'file' => 'img/avatars/avatar2.png'],
-                            ['id' => 'avatar3', 'label' => 'Avatar 3', 'file' => 'img/avatars/avatar3.png'],
-                        ];
-                        $current = (string)($data['avatar'] ?? 'avatar1');
-                        ?>
+                        <div class="profile-avatar-grid" id="avatarGrid">
+                            <?php
+                            $avatars = [
+                                ['id' => 'avatar1', 'label' => 'Avatar 1', 'file' => 'img/avatars/avatar1.png'],
+                                ['id' => 'avatar2', 'label' => 'Avatar 2', 'file' => 'img/avatars/avatar2.png'],
+                                ['id' => 'avatar3', 'label' => 'Avatar 3', 'file' => 'img/avatars/avatar3.png'],
+                            ];
+                            $current = (string)($data['avatar'] ?? 'avatar3');
+                            ?>
 
-                        <?php foreach ($avatars as $a): ?>
-                        <label class="profile-avatar-card position-relative">
-                            <input
-                            class="profile-avatar-radio"
-                            type="radio"
-                            name="avatar"
-                            value="<?php echo htmlspecialchars($a['id']); ?>"
-                            <?php echo ($current === $a['id']) ? 'checked' : ''; ?>
-                            required
-                            />
+                            <?php foreach ($avatars as $a): ?>
+                            <label class="profile-avatar-card position-relative">
+                                <input
+                                    class="profile-avatar-radio"
+                                    type="radio"
+                                    name="avatar"
+                                    value="<?php echo htmlspecialchars($a['id']); ?>"
+                                    <?php echo ($current === $a['id']) ? 'checked' : ''; ?>
+                                    required
+                                />
 
-                            <img
-                            src="<?php echo htmlspecialchars($a['file']); ?>"
-                            alt="<?php echo htmlspecialchars($a['label']); ?>"
-                            class="profile-avatar-img"
-                            loading="lazy"
-                            />
+                                <img
+                                    src="<?php echo htmlspecialchars($a['file']); ?>"
+                                    alt="<?php echo htmlspecialchars($a['label']); ?>"
+                                    class="profile-avatar-img"
+                                    loading="lazy"
+                                />
 
-                            <div class="profile-avatar-name"><?php echo htmlspecialchars($a['label']); ?></div>
-                        </label>
-                        <?php endforeach; ?>
-                    </div>
+                                <span class="profile-avatar-name"><?php echo htmlspecialchars($a['label']); ?></span>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
 
-                    <div class="form-text mt-2">
-                        Scegli un avatar: verrà salvato nel tuo profilo.
-                    </div>
+                        <div class="form-text mt-2">
+                            Scegli un avatar: verrà salvato nel tuo profilo.
+                        </div>
                     </section>
 
                     <section class="profile-section">
@@ -409,13 +418,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="container py-4">
                 <div class="row gy-3 align-items-start">
                     <div class="col-md-4">
-                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+                        <h4 class="fw-bold mb-2 text-white">UniBoQuest</h4>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
                         <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <h5 class="fw-bold mb-2 text-white">Navigazione</h5>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>

@@ -35,13 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-$stmt = $mysqli->prepare("SELECT id, email, password_hash, role FROM users WHERE email = ? LIMIT 1");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$stmt->bind_result($id, $emailDb, $passwordHashDb, $roleDb);
+        $stmt = $mysqli->prepare("SELECT id, email, password_hash, role FROM users WHERE email = ? LIMIT 1");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($id, $emailDb, $passwordHashDb, $roleDb);
 
-$found = $stmt->fetch();
-$stmt->close();
+        $found = $stmt->fetch();
+        $stmt->close();
 
         if (!$found || !password_verify($password, (string)$passwordHashDb)) {
             $errors[] = "Credenziali non valide.";
@@ -109,7 +109,7 @@ $stmt->close();
 
         <main id="contenuto" class="container">
             <div class="auth-card">
-                <h2 class="mb-4 font-8bit text-center text-white">LOGIN</h2>
+                <h1 class="h2 mb-4 font-8bit text-center text-white">LOGIN</h1>
 
                 <?php if (!empty($errors)): ?>
                     <div class="checkin-msg err" style="margin-bottom: 1rem;">
@@ -121,7 +121,7 @@ $stmt->close();
 
                 <form action="login.php" method="post">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email Ateneo</label>
+                        <label for="email" class="form-label text-white">Email Ateneo</label>
                         <input
                             type="email"
                             id="email"
@@ -135,7 +135,7 @@ $stmt->close();
                     </div>
 
                     <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label text-white">Password</label>
                         <input
                             type="password"
                             id="password"
@@ -153,34 +153,34 @@ $stmt->close();
                     </div>
                 </form>
 
-                <div class="auth-footer-link">
-                    Non hai ancora un account? <a href="registrazione.php">Registrati ora</a>
+                <div class="auth-footer-link text-white mt-3">
+                    Non hai ancora un account? <a href="registrazione.php" class="text-warning">Registrati ora</a>
                 </div>
             </div>
         </main>
 
         <footer class="footer-ubq mt-5">
             <div class="container py-4">
-                <div class="row gy-3 align-items-start">
+                <div class="row gy-3 align-items-start text-white">
                     <div class="col-md-4">
-                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
-                        <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
+                        <h2 class="h5 fw-bold mb-2">UniBoQuest</h2>
+                        <p class="mb-1 small opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
+                        <p class="small mb-0 opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <h2 class="h6 fw-bold mb-2">Navigazione</h2>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-                        <div class="footer-social d-flex gap-3">
+                        <h2 class="h6 fw-bold mb-2">Seguici</h2>
+                        <nav class="footer-social d-flex gap-3" aria-label="Social">
                             <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                             <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
                             <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-                        </div>
+                        </nav>
                     </div>
                 </div>
                  <div class="footer-bottom border-top border-light-subtle mt-4 pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center small text-secondary">

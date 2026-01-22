@@ -89,9 +89,9 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
               <li class="nav-item"><a class="nav-link" href="missioni.php">MISSIONI</a></li>
               <li class="nav-item"><a class="nav-link active" href="profilo.php" aria-current="page">PROFILO</a></li>
               <?php if (($_SESSION['user_role'] ?? 'user') === 'admin'): ?>
-                    <li class="nav-item">
-                    <a class="nav-link" href="admin_missions.php">ADMIN</a>
-                    </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="admin_missions.php">ADMIN</a>
+                </li>
               <?php endif; ?>
             </ul>
 
@@ -106,9 +106,9 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
     <main id="contenuto" class="container">
       <div class="profile-card">
         <div class="profile-header">
-          <h2 class="profile-title font-8bit mb-0" style="font-size: 1.15rem;">
+          <h1 class="profile-title font-8bit mb-0" style="font-size: 1.15rem;">
             PROFILO PLAYER
-          </h2>
+          </h1>
           <span class="profile-step-badge">
             <?php echo htmlspecialchars($displayName); ?>
           </span>
@@ -119,7 +119,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
         </p>
 
         <section class="profile-section">
-          <h3 class="profile-section-title">AVATAR</h3>
+          <h2 class="profile-section-title h5">AVATAR</h2>
 
           <div class="d-flex align-items-center gap-3">
             <img
@@ -136,7 +136,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
         </section>
 
         <section class="profile-section">
-          <h3 class="profile-section-title">DATI BASE</h3>
+          <h2 class="profile-section-title h5">DATI BASE</h2>
 
           <div class="row g-3">
             <div class="col-12 col-md-6">
@@ -147,7 +147,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
             </div>
 
             <div class="col-12 col-md-6">
-              <div class="form-label">Nome visualizzato</div>
+              <div class="form-label">Nome Studente</div>
               <div class="text-white" style="font-family:'Share Tech Mono', monospace;">
                 <?php echo htmlspecialchars((string)($profile['display_name'] ?? '')); ?>
                 <?php if (empty($profile['display_name'])): ?>
@@ -159,7 +159,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
         </section>
 
         <section class="profile-section">
-          <h3 class="profile-section-title">DETTAGLI UNIBO</h3>
+          <h2 class="profile-section-title h5">DETTAGLI UNIBO</h2>
 
           <div class="row g-3">
             <div class="col-12 col-md-6">
@@ -197,7 +197,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
         </section>
 
         <section class="profile-section">
-          <h3 class="profile-section-title">PREFERENZE MISSIONI</h3>
+          <h2 class="profile-section-title h5">PREFERENZE MISSIONI</h2>
 
           <div class="text-white" style="font-family:'Share Tech Mono', monospace;">
             <?php echo htmlspecialchars($prefsLabel); ?>
@@ -205,7 +205,7 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
         </section>
 
         <section class="profile-section">
-          <h3 class="profile-section-title">PRIVACY</h3>
+          <h2 class="profile-section-title h5">PRIVACY</h2>
 
           <div class="text-white" style="font-family:'Share Tech Mono', monospace;">
             Profilo pubblico: <strong><?php echo htmlspecialchars(yesNo($profile['privacy_public'] ?? 0)); ?></strong>
@@ -223,13 +223,13 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
       <div class="container py-4">
         <div class="row gy-3 align-items-start">
           <div class="col-md-4">
-            <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+            <h2 class="h5 fw-bold mb-2 text-white">UniBoQuest</h2>
             <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
             <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
           </div>
 
           <div class="col-md-3">
-            <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+            <h2 class="h6 fw-bold mb-2 text-white">Navigazione</h2>
             <ul class="list-unstyled small mb-0">
               <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
               <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
@@ -237,12 +237,12 @@ $prefsLabel = $prefs ? implode(', ', $prefs) : 'Nessuna preferenza selezionata';
           </div>
 
           <div class="col-md-3">
-            <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-            <div class="footer-social d-flex gap-3">
+            <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
+            <nav class="footer-social d-flex gap-3" aria-label="Social">
               <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
               <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
               <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-            </div>
+            </nav>
           </div>
         </div>
 

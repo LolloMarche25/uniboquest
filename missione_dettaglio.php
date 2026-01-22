@@ -162,9 +162,9 @@ elseif ($isActive) $badge = 'In corso';
       <div class="missione-card">
         <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
           <div>
-            <h2 class="missione-title font-8bit" style="font-size: 1.05rem;">
+            <h1 class="missione-title font-8bit h2" style="font-size: 1.05rem;">
               <?php echo htmlspecialchars(mb_strtoupper($title, 'UTF-8')); ?>
-            </h2>
+            </h1>
             <p class="missione-subtitle mb-0">
               <?php echo htmlspecialchars($subtitle !== '' ? $subtitle : 'Dettagli missione'); ?>
             </p>
@@ -205,7 +205,7 @@ elseif ($isActive) $badge = 'In corso';
 
           <div class="col-12 col-lg-5">
             <div class="missione-panel">
-              <h3 class="font-8bit" style="font-size: 0.9rem; color: #fff;">AZIONI</h3>
+              <h2 class="h3 font-8bit" style="font-size: 0.9rem; color: #fff;">AZIONI</h2>
 
               <div class="missione-actions">
                 <a class="btn-pixel" href="missioni.php">Torna alle missioni</a>
@@ -242,7 +242,7 @@ elseif ($isActive) $badge = 'In corso';
             </div>
 
             <div class="missione-panel mt-3">
-              <h3 class="font-8bit" style="font-size: 0.9rem; color: #fff;">RICOMPENSA</h3>
+              <h2 class="h3 font-8bit" style="font-size: 0.9rem; color: #fff;">RICOMPENSA</h2>
               <p class="missione-text mb-2">XP ottenuti completando la missione:</p>
               <span class="missione-pill xp">+<?php echo (int)$xp; ?> XP</span>
             </div>
@@ -255,13 +255,13 @@ elseif ($isActive) $badge = 'In corso';
       <div class="container py-4">
         <div class="row gy-3 align-items-start">
           <div class="col-md-4">
-            <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+            <h2 class="h5 fw-bold mb-2 text-white">UniBoQuest</h2>
             <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
             <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
           </div>
 
           <div class="col-md-3">
-            <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+            <h2 class="h6 fw-bold mb-2 text-white">Navigazione</h2>
             <ul class="list-unstyled small mb-0">
               <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
               <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
@@ -269,12 +269,12 @@ elseif ($isActive) $badge = 'In corso';
           </div>
 
           <div class="col-md-3">
-            <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-            <div class="footer-social d-flex gap-3">
+            <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
+            <nav class="footer-social d-flex gap-3" aria-label="Social">
               <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
               <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
               <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-            </div>
+            </nav>
           </div>
         </div>
 

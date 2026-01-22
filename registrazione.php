@@ -108,10 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <main id="contenuto" class="container">
             <div class="auth-card">
-                <h2 class="mb-4 font-8bit text-center text-white" style="font-size: 1.2rem;">NUOVO PLAYER</h2>
+                <h1 class="mb-4 font-8bit text-center text-white h2" style="font-size: 1.2rem;">NUOVO PLAYER</h1>
 
                 <?php if (!empty($errors)): ?>
-                    <div class="checkin-msg err" style="margin-bottom: 1rem;">
+                    <div class="checkin-msg err" role="alert" style="margin-bottom: 1rem;">
                         <?php foreach ($errors as $e): ?>
                             <div><?php echo htmlspecialchars($e); ?></div>
                         <?php endforeach; ?>
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <form action="registrazione.php" method="post">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email Ateneo</label>
+                        <label for="email" class="form-label text-white">Email Ateneo</label>
                         <input
                             type="email"
                             id="email"
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label text-white">Password</label>
                         <input
                             type="password"
                             id="password"
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mb-4">
-                        <label for="password_confirm" class="form-label">Conferma password</label>
+                        <label for="password_confirm" class="form-label text-white">Conferma password</label>
                         <input
                             type="password"
                             id="password_confirm"
@@ -175,24 +175,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="container py-4">
                 <div class="row gy-3 align-items-start">
                     <div class="col-md-4">
-                        <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
+                        <h2 class="h5 fw-bold mb-2 text-white">UniBoQuest</h2>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
                         <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
+                        <h2 class="h6 fw-bold mb-2 text-white">Navigazione</h2>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3">
-                        <h6 class="fw-bold mb-2 text-white">Seguici</h6>
-                        <div class="footer-social d-flex gap-3">
+                        <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
+                        <nav class="footer-social d-flex gap-3" aria-label="Social Link">
                             <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                             <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
                             <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
-                        </div>
+                        </nav>
                     </div>
                 </div>
                  <div class="footer-bottom border-top border-light-subtle mt-4 pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center small text-secondary">
