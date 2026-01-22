@@ -249,11 +249,11 @@ function h(string $s): string {
 
                 <div class="col-md-3">
                     <h4 class="fw-bold mb-2 h6 text-white">Seguici</h4>
-                    <div class="footer-social d-flex gap-3">
-                        <a href="#" class="text-white fs-5" aria-label="Instagram"><span class="bi bi-instagram" aria-hidden="true"></span></a>
-                        <a href="#" class="text-white fs-5" aria-label="Discord"><span class="bi bi-discord" aria-hidden="true"></span></a>
-                        <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><span class="bi bi-github" aria-hidden="true"></span></a>
-                    </div>
+                    <nav class="footer-social" aria-label="Social">
+                        <a href="#" class="social-icon" aria-label="Instagram"><span class="bi bi-instagram" aria-hidden="true"></span></a>
+                        <a href="#" class="social-icon" aria-label="Discord"><span class="bi bi-discord" aria-hidden="true"></span></a>
+                        <a href="https://github.com/LolloMarche25/uniboquest.git" class="social-icon" aria-label="GitHub"><span class="bi bi-github" aria-hidden="true"></span></a>
+                    </nav>
                 </div>
             </div>
 
