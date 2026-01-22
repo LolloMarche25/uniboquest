@@ -67,7 +67,6 @@ body.dashboard-page main {
   margin-top: 0.5rem;
 }
 
-/* progress bar più “neon” senza cambiare palette globale */
 .dashboard-progress {
   height: 12px;
   border-radius: 0;
