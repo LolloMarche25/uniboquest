@@ -164,14 +164,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-4">
                         <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
                     <div class="col-md-3">
                         <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
-                            <li><a href="chi-siamo.html" class="footer-link text-white text-decoration-none">Chi siamo</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3">

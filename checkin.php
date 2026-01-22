@@ -7,14 +7,12 @@ require __DIR__ . '/config/db.php';
 
 $userId = (int)$_SESSION['user_id'];
 
-// id missione (di default "checkin")
 $id = trim((string)($_GET['id'] ?? 'checkin'));
 if ($id === '' || !preg_match('/^[a-z0-9_-]{1,50}$/i', $id)) {
   header('Location: missioni.php');
   exit;
 }
 
-// Carica missione e codice check-in (codice NON va mai mostrato in pagina)
 $stmt = $mysqli->prepare("
   SELECT id, title, xp, requires_checkin, checkin_code
   FROM missions
@@ -35,7 +33,6 @@ $title = (string)$mission['title'];
 $xp = (int)$mission['xp'];
 $expectedCode = (string)($mission['checkin_code'] ?? '');
 
-// Stato attuale nel DB (completato?)
 $stmt = $mysqli->prepare("
   SELECT status
   FROM user_missions
@@ -47,18 +44,16 @@ $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-$userStatus = (string)($row['status'] ?? ''); // '' | active | completed
+$userStatus = (string)($row['status'] ?? '');
 $alreadyCompleted = ($userStatus === 'completed');
 
 $errors = [];
 $successMsg = "";
 
-// Messaggi success da redirect (PRG)
 if (!empty($_GET['ok'])) {
   $successMsg = "Check-in confermato! +{$xp} XP.";
 }
 
-// Se non completato, entrando qui la missione diventa "active" (join automatico)
 if (!$alreadyCompleted) {
   $stmt = $mysqli->prepare("
     INSERT INTO user_missions (user_id, mission_id, status)
@@ -70,19 +65,16 @@ if (!$alreadyCompleted) {
   $stmt->close();
 }
 
-// POST: valida codice e completa (solo se non è già completata)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyCompleted) {
   $code = strtoupper(trim((string)($_POST['code'] ?? '')));
 
   if ($code === '') {
     $errors[] = "Inserisci un codice.";
   } elseif ($expectedCode === '') {
-    // Config err: missione check-in senza codice
     $errors[] = "Codice non configurato per questa missione.";
   } elseif (!hash_equals(strtoupper($expectedCode), $code)) {
     $errors[] = "Codice non valido. Riprova.";
   } else {
-    // Completa in modo idempotente: non riscrive completed_at se già completed.
     $stmt = $mysqli->prepare("
       INSERT INTO user_missions (user_id, mission_id, status, completed_at)
       VALUES (?, ?, 'completed', NOW())
@@ -92,13 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyCompleted) {
     $stmt->execute();
     $stmt->close();
 
-    // PRG: evita reinvio su refresh
     header('Location: checkin.php?id=' . urlencode($id) . '&ok=1');
     exit;
   }
 }
 
-// Se era già completato e non ho già un messaggio success (es. ok=1)
 if ($alreadyCompleted && $successMsg === "") {
   $successMsg = "Check-in già completato.";
 }
@@ -126,7 +116,6 @@ function h(string $s): string {
   <body class="manual-bg checkin-page">
     <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
 
-    <!-- Header PRIVATO -->
     <header class="header-glass">
       <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid">
@@ -179,7 +168,6 @@ function h(string $s): string {
         <hr class="my-4" style="border-color: rgba(255,255,255,.15);" />
 
         <div class="row g-3">
-          <!-- Sinistra: QR placeholder -->
           <div class="col-12 col-lg-6">
             <div class="checkin-panel">
               <h3 class="font-8bit" style="font-size: 0.9rem; color: #fff;">SCANSIONA QR</h3>
@@ -196,7 +184,6 @@ function h(string $s): string {
             </div>
           </div>
 
-          <!-- Destra: codice fallback -->
           <div class="col-12 col-lg-6">
             <div class="checkin-panel">
               <h3 class="font-8bit" style="font-size: 0.9rem; color: #fff;">CODICE FALLBACK</h3>
@@ -264,7 +251,7 @@ function h(string $s): string {
           <div class="col-md-4">
             <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
             <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-            <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+            <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
           </div>
 
           <div class="col-md-3">

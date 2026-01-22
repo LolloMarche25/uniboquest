@@ -7,7 +7,6 @@ require __DIR__ . '/config/db.php';
 
 $userId = (int)$_SESSION['user_id'];
 
-// Azioni POST (join/abandon) dalla lista
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = (string)($_POST['action'] ?? '');
   $mid = trim((string)($_POST['mission_id'] ?? ''));
@@ -38,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
 }
 
-// Carica missioni
 $res = $mysqli->query("
   SELECT id, title, description, category, difficulty, time_label, xp, requires_checkin
   FROM missions
@@ -48,7 +46,6 @@ $res = $mysqli->query("
 $missions = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
 if ($res) $res->close();
 
-// Carica stati utente per tutte le missioni (mappa mission_id => status)
 $stmt = $mysqli->prepare("SELECT mission_id, status FROM user_missions WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -57,12 +54,11 @@ $stmt->close();
 
 $state = [];
 foreach ($rows as $r) {
-  $state[(string)$r['mission_id']] = (string)$r['status']; // active|completed
+  $state[(string)$r['mission_id']] = (string)$r['status'];
 }
 
 function normCat(string $c): string {
   $c = strtolower(trim($c));
-  // coerente con i tuoi filtri JS: eventi/studio/social/sport
   if ($c === 'eventi' || $c === 'evento') return 'eventi';
   if ($c === 'studio') return 'studio';
   if ($c === 'sport') return 'sport';
@@ -97,7 +93,6 @@ $missionCount = count($missions);
     <body class="manual-bg missioni-page">
         <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
 
-        <!-- Header PRIVATO -->
         <header class="header-glass">
             <nav class="navbar navbar-expand-md navbar-dark">
                 <div class="container-fluid">
@@ -138,7 +133,6 @@ $missionCount = count($missions);
 
                 <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
 
-                <!-- Filtri (JS UI) -->
                 <div class="missioni-panel mb-3">
                     <div class="row g-3 align-items-end">
                         <div class="col-12 col-md-5">
@@ -173,7 +167,6 @@ $missionCount = count($missions);
                     </div>
                 </div>
 
-                <!-- Lista missioni -->
                 <div class="d-grid gap-3" id="missionList">
                   <?php foreach ($missions as $m):
                     $mid = (string)$m['id'];
@@ -185,7 +178,7 @@ $missionCount = count($missions);
                     $timeLabel = (string)($m['time_label'] ?? '');
                     $requiresCheckin = ((int)$m['requires_checkin'] === 1);
 
-                    $st = $state[$mid] ?? ''; // ''|active|completed
+                    $st = $state[$mid] ?? '';
                     $isActive = ($st === 'active');
                     $isCompleted = ($st === 'completed');
                   ?>
@@ -257,7 +250,7 @@ $missionCount = count($missions);
                     <div class="col-md-4">
                         <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">

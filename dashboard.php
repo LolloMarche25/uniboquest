@@ -10,7 +10,6 @@ $displayName = (string)($_SESSION['user_email'] ?? 'Player');
 
 $XP_PER_LEVEL = 100;
 
-// XP totale = somma XP delle missioni completate
 $stmt = $mysqli->prepare("
   SELECT COALESCE(SUM(m.xp), 0) AS xp_total
   FROM user_missions um
@@ -22,7 +21,6 @@ $stmt->execute();
 $xpTotal = (int)($stmt->get_result()->fetch_assoc()['xp_total'] ?? 0);
 $stmt->close();
 
-// Missioni attive (count)
 $stmt = $mysqli->prepare("
   SELECT COUNT(*) AS cnt
   FROM user_missions
@@ -33,7 +31,6 @@ $stmt->execute();
 $activeCount = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
 $stmt->close();
 
-// Lista missioni attive (max 3)
 $stmt = $mysqli->prepare("
   SELECT m.id, m.title
   FROM user_missions um
@@ -47,14 +44,12 @@ $stmt->execute();
 $activeMissions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Level math
 $level = intdiv($xpTotal, $XP_PER_LEVEL) + 1;
 $inLevel = $xpTotal % $XP_PER_LEVEL;
 $pct = (int)round(($inLevel / $XP_PER_LEVEL) * 100);
 if ($pct < 0) $pct = 0;
 if ($pct > 100) $pct = 100;
 
-// Per UI: "0 / 100" ecc.
 $xpInLevelLabel = $inLevel . " / " . $XP_PER_LEVEL;
 $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
 ?>
@@ -118,7 +113,6 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
 
                 <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
 
-                <!-- Tiles -->
                 <div class="row g-3">
                     <div class="col-12 col-md-4">
                         <div class="dashboard-tile">
@@ -151,7 +145,6 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                     </div>
                 </div>
 
-                <!-- Azioni rapide -->
                 <div class="mt-4 dashboard-tile">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                         <div>
@@ -167,7 +160,6 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                     </div>
                 </div>
 
-                <!-- Missioni consigliate (placeholder) -->
                 <div class="mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <h3 class="font-8bit mb-0" style="font-size: 0.95rem; color: #fff;">MISSIONI CONSIGLIATE</h3>
@@ -238,7 +230,7 @@ $xpTotalLabel = $xpTotal . " / " . ($level * $XP_PER_LEVEL);
                     <div class="col-md-4">
                         <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">

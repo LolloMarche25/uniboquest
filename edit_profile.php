@@ -24,7 +24,6 @@ $data = [
   'privacy_public' => 0,
 ];
 
-// Se profilo già esiste, pre-carica
 $stmt = $mysqli->prepare("SELECT * FROM profiles WHERE user_id = ? LIMIT 1");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -43,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data['nickname'] = trim((string)($_POST['nickname'] ?? ''));
     $data['display_name'] = trim((string)($_POST['display_name'] ?? ''));
     $data['course'] = trim((string)($_POST['course'] ?? ''));
-    $data['year_label'] = trim((string)($_POST['year'] ?? ''));     // name="year" nel form
+    $data['year_label'] = trim((string)($_POST['year'] ?? ''));
     $data['campus'] = trim((string)($_POST['campus'] ?? ''));
     $data['bio'] = trim((string)($_POST['bio'] ?? ''));
     $data['avatar'] = trim((string)($_POST['avatar'] ?? 'sprinter'));
@@ -54,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data['pref_social'] = isset($_POST['pref_social']) ? 1 : 0;
     $data['privacy_public'] = isset($_POST['privacy_public']) ? 1 : 0;
 
-    // Validazioni minime
     if ($data['nickname'] === '' || strlen($data['nickname']) < 3) {
         $errors[] = "Nickname obbligatorio (min 3 caratteri).";
     }
@@ -65,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Bio troppo lunga (max 255).";
     }
 
-    // nickname unico
     if (!$errors) {
         $stmt = $mysqli->prepare("SELECT user_id FROM profiles WHERE nickname = ? AND user_id <> ? LIMIT 1");
         $stmt->bind_param("si", $data['nickname'], $userId);
@@ -98,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $mysqli->prepare($sql);
 
-        // ✅ FIX: signature corretta (13 parametri)
         $stmt->bind_param(
             "issssssiiiisi",
             $userId,
@@ -228,7 +224,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </section>
 
-                    <!-- DETTAGLI UNIBO -->
                     <section class="profile-section">
                         <h3 class="profile-section-title">DETTAGLI UNIBO</h3>
 
@@ -284,7 +279,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </section>
 
-                    <!-- PREFERENZE -->
                     <section class="profile-section">
                         <h3 class="profile-section-title">PREFERENZE MISSIONI</h3>
 
@@ -315,7 +309,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </section>
 
-                    <!-- AVATAR -->
                     <section class="profile-section">
                     <h3 class="profile-section-title">SCEGLI AVATAR</h3>
 
@@ -357,8 +350,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     </section>
 
-
-                    <!-- PRIVACY -->
                     <section class="profile-section">
                         <h3 class="profile-section-title">PRIVACY</h3>
 
@@ -370,7 +361,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </section>
 
-                    <!-- AZIONI -->
                     <div class="profile-actions">
                         <a class="btn-pixel" href="registrazione.php">Indietro</a>
                         <button type="submit" class="btn-pixel-yellow">Salva e vai alla dashboard</button>
@@ -385,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-4">
                         <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
 
                     <div class="col-md-3">
@@ -393,7 +383,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
-                            <li><a href="chi-siamo.html" class="footer-link text-white text-decoration-none">Chi siamo</a></li>
                         </ul>
                     </div>
 

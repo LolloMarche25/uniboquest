@@ -5,7 +5,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require __DIR__ . '/config/db.php'; // deve creare $mysqli (mysqli)
+require __DIR__ . '/config/db.php';
 
 if (!empty($_SESSION['user_id'])) {
     header('Location: dashboard.php');
@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = (string)($_POST['password'] ?? '');
     $password_confirm = (string)($_POST['password_confirm'] ?? '');
 
-    // Validazioni base
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Email non valida.";
     }
@@ -31,9 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Le password non coincidono.";
     }
 
-    // Se tutto ok, controlla duplicati e inserisci
     if (!$errors) {
-        // Controllo email già presente (senza get_result per compatibilità)
         $stmt = $mysqli->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -53,14 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $userId = (int)$stmt->insert_id;
                 $stmt->close();
 
-                // Login automatico post-registrazione
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['user_email'] = $email;
 
-                // Anti session fixation
                 session_regenerate_id(true);
 
-                // Step successivo: onboarding profilo
                 header('Location: edit_profile.php');
                 exit;
             }
@@ -183,14 +177,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-4">
                         <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
                         <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+                        <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
                     </div>
                     <div class="col-md-3">
                         <h6 class="fw-bold mb-2 text-white">Navigazione</h6>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
-                            <li><a href="chi-siamo.html" class="footer-link text-white text-decoration-none">Chi siamo</a></li>
                         </ul>
                     </div>
                     <div class="col-md-3">

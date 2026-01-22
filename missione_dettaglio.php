@@ -13,7 +13,6 @@ if ($id === '' || !preg_match('/^[a-z0-9_-]{1,50}$/i', $id)) {
   exit;
 }
 
-// Carica missione
 $stmt = $mysqli->prepare("
   SELECT id, title, subtitle, description, category, difficulty, time_label, xp,
          goal, steps_json, note,
@@ -43,7 +42,6 @@ $goal = (string)($mission['goal'] ?? '');
 $note = (string)($mission['note'] ?? '');
 $requiresCheckin = ((int)($mission['requires_checkin'] ?? 0) === 1);
 
-// Steps: JSON array di stringhe
 $steps = [];
 $rawSteps = (string)($mission['steps_json'] ?? '');
 if ($rawSteps !== '') {
@@ -55,7 +53,6 @@ if ($rawSteps !== '') {
   }
 }
 
-// Stato utente
 $stmt = $mysqli->prepare("
   SELECT status
   FROM user_missions
@@ -67,16 +64,14 @@ $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-$status = (string)($row['status'] ?? ''); // '' | active | completed
+$status = (string)($row['status'] ?? '');
 
 $errors = [];
 $success = "";
 
-// POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = (string)($_POST['action'] ?? '');
 
-  // ricarico stato "fresh" prima di mutare (per sicurezza minima)
   $stmt = $mysqli->prepare("SELECT status FROM user_missions WHERE user_id = ? AND mission_id = ? LIMIT 1");
   $stmt->bind_param("is", $userId, $id);
   $stmt->execute();
@@ -133,15 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  // Evita resubmit su refresh
   header('Location: missione_dettaglio.php?id=' . urlencode($id) . ($success !== '' ? '&ok=1' : ''));
   exit;
 }
 
-// Se arriviamo da redirect ok
 if (!empty($_GET['ok']) && $success === '' && empty($errors)) {
-  // messaggio neutro
-  // (se vuoi, puoi ricaricare stato e mostrare un testo più specifico)
 }
 
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
@@ -171,7 +162,6 @@ function statusLabel(string $status): string {
   <body class="manual-bg missione-page">
     <a href="#contenuto" class="skip-link">Salta al contenuto principale</a>
 
-    <!-- Header PRIVATO -->
     <header class="header-glass">
       <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid">
@@ -213,7 +203,6 @@ function statusLabel(string $status): string {
         <hr class="my-4" style="border-color: rgba(255,255,255,.15);">
 
         <div class="row g-3">
-          <!-- Colonna sinistra: descrizione -->
           <div class="col-12 col-lg-7">
             <div class="missione-panel">
               <p class="missione-text"><?php echo h($desc); ?></p>
@@ -253,7 +242,6 @@ function statusLabel(string $status): string {
             </div>
           </div>
 
-          <!-- Colonna destra: azioni -->
           <div class="col-12 col-lg-5">
             <div class="missione-panel">
               <h3 class="font-8bit" style="font-size: 0.9rem; color: #fff;">AZIONI</h3>
@@ -316,7 +304,7 @@ function statusLabel(string $status): string {
           <div class="col-md-4">
             <h5 class="fw-bold mb-2 text-white">UniBoQuest</h5>
             <p class="mb-1 small text-white opacity-75">Il gioco che trasforma la vita universitaria in una quest.</p>
-            <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Bologna.</p>
+            <p class="small mb-0 text-white opacity-50">Progetto didattico – Università di Cesena.</p>
           </div>
 
           <div class="col-md-3">
