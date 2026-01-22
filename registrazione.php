@@ -189,9 +189,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-3">
                         <h2 class="h6 fw-bold mb-2 text-white">Seguici</h2>
                         <nav class="footer-social d-flex gap-3" aria-label="Social Link">
-                            <a href="#" class="text-white fs-5" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="text-white fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
-                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                            <a href="#" class="text-white fs-5" aria-label="Instagram">
+                                <span class="bi bi-instagram" aria-hidden="true"></span>
+                            </a>
+                            <a href="#" class="text-white fs-5" aria-label="Discord">
+                                <span class="bi bi-discord" aria-hidden="true"></span>
+                            </a>
+                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="text-white fs-5" aria-label="GitHub">
+                                <span class="bi bi-github" aria-hidden="true"></span>
+                            </a>
                         </nav>
                     </div>
                 </div>
