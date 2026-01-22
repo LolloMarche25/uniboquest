@@ -86,3 +86,34 @@ body.home-page {
     color: #000;
     border-color: #ffea00;
 }
+
+.hero-ubq-picture { 
+  display: block; 
+}
+
+.hero-ubq-monitor-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #ffea00;
+  font-size: 0.85rem;
+  text-align: center;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.8);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 767.98px) {
+
+  .hero-ubq-monitor {
+    top: 19.14%;
+    left: 16.55%;
+    width: 67.03%;
+    height: 34.84%;
+    gap: 12px;
+  }
+
+  .btn-os-home {
+    font-size: 0.72rem;
+    padding: 12px 0;
+    width: 92%;
+    border-width: 2px;
+  }
+}

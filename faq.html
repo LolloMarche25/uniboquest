@@ -8,7 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/main.css" />
 
         <title>UniBoQuest - FAQ</title>
     </head>
@@ -47,7 +47,7 @@
                 <div class="col-lg-9 col-xl-8">
                     
                     <div class="text-center mb-5">
-                        <h1 class="h2 font-8bit text-warning mb-3">Domande Frequenti</h1>
+                        <h1 class="font-8bit text-warning mb-3">Domande Frequenti</h1>
                         <p class="text-light opacity-75">
                             Tutto quello che devi sapere per dominare il campus e scalare la classifica.
                         </p>
@@ -56,12 +56,12 @@
                     <div class="accordion accordion-flush" id="faqAccordion">
                         
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            <h2 class="accordion-header" id="h-faq1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-controls="faq1" aria-expanded="false">
                                     Cos’è UniBoQuest?
                                 </button>
                             </h2>
-                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq1">
                                 <div class="accordion-body">
                                     È un servizio gamificato per studenti: propone missioni legate al campus (eventi, workshop, attività utili) e premia la partecipazione con XP e badge collezionabili che testimoniano il tuo percorso accademico extra-curriculare.
                                 </div>
@@ -69,12 +69,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            <h2 class="accordion-header" id="h-faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-controls="faq2" aria-expanded="false">
                                     Serve un account per usare UniBoQuest?
                                 </button>
                             </h2>
-                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq2">
                                 <div class="accordion-body">
                                     Puoi consultare le informazioni generali liberamente. Tuttavia, per partecipare alle missioni, accumulare XP e scalare la classifica, devi 
                                     <a href="registrazione.php" class="faq-highlight">Registrarti</a> o effettuare il <a href="login.php" class="faq-highlight">Login</a>.
@@ -83,12 +83,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            <h2 class="accordion-header" id="h-faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-controls="faq3" aria-expanded="false">
                                     Come funziona il check-in?
                                 </button>
                             </h2>
-                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq3">
                                 <div class="accordion-body">
                                     Durante l’attività viene mostrato un QR Code. Una volta loggato, scannerizzalo con il tuo smartphone per confermare la presenza. Se la fotocamera ha problemi, puoi inserire manualmente il <strong>codice alfanumerico</strong> di fallback fornito sul posto.
                                 </div>
@@ -96,12 +96,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            <h2 class="accordion-header" id="h-faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-controls="faq4" aria-expanded="false">
                                     Cosa succede se arrivo tardi a una missione?
                                 </button>
                             </h2>
-                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq4">
                                 <div class="accordion-body">
                                     Alcune missioni hanno una finestra temporale rigida per il check-in. Altre missioni "esplorative" sono sempre aperte. Controlla sempre i dettagli della missione nella tua Dashboard per non perdere i punti!
                                 </div>
@@ -109,12 +109,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                            <h2 class="accordion-header" id="h-faq5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-controls="faq5" aria-expanded="false">
                                     Cosa sono XP e Badge?
                                 </button>
                             </h2>
-                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq5">
                                 <div class="accordion-body">
                                     Gli <strong>XP (Punti Esperienza)</strong> determinano il tuo livello globale. I <strong>Badge</strong> sono onorificenze speciali che sblocchi completando obiettivi specifici. Alcuni badge potrebbero sbloccare vantaggi esclusivi nel campus.
                                 </div>
@@ -122,12 +122,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                            <h2 class="accordion-header" id="h-faq6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6" aria-controls="faq6" aria-expanded="false">
                                     Posso scambiare gli XP con premi reali?
                                 </button>
                             </h2>
-                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq6">
                                 <div class="accordion-body">
                                     Attualmente gli XP servono per la classifica. Stiamo lavorando per integrare premi legati al merchandising UniBo e agevolazioni per i servizi del campus per i giocatori di livello più alto.
                                 </div>
@@ -135,12 +135,12 @@
                         </div>
 
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                            <h2 class="accordion-header" id="h-faq7">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7" aria-controls="faq7" aria-expanded="false">
                                     Come segnalo un problema o un bug?
                                 </button>
                             </h2>
-                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="h-faq7">
                                 <div class="accordion-body">
                                     Se riscontri errori nel caricamento dei dati, invia una segnalazione a <a href="mailto:info@uniboquest.it" class="faq-highlight">info@uniboquest.it</a> indicando il tuo nickname e la missione interessata.
                                 </div>
@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="col-md-3 footer-nav">
-                        <h2 class="h6 fw-bold mb-2">Navigazione</h2>
+                        <h3 class="h6 fw-bold mb-2">Navigazione</h3>
                         <ul class="list-unstyled small mb-0">
                             <li><a href="gioco.html" class="footer-link">Il Gioco</a></li>
                             <li><a href="faq.html" class="footer-link">FAQ</a></li>
@@ -171,16 +171,21 @@
                     </div>
 
                     <div class="col-md-3">
-                        <h2 class="h6 fw-bold mb-2">Contatti</h2>
+                        <h3 class="h6 fw-bold mb-2">Contatti</h3>
                         <p class="small mb-1">📧 info@uniboquest.it</p>
                         <p class="small mb-3">🎓 Campus Universitario – Cesena</p>
-                        
-                        <h2 class="h6 fw-bold mb-2">Seguici</h2>
-                        <nav class="footer-social" aria-label="Link ai social">
-                            <a href="#" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="social-icon" aria-label="Discord"><i class="bi bi-discord"></i></a>
-                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="social-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>
-                        </nav>
+                        <h3 class="h6 fw-bold mb-2">Seguici</h3>
+                        <div class="footer-social" aria-label="Social">
+                            <a href="#" class="social-icon" aria-label="Instagram">
+                                <span class="bi bi-instagram" aria-hidden="true"></span>
+                            </a>
+                            <a href="#" class="social-icon" aria-label="Discord">
+                                <span class="bi bi-discord" aria-hidden="true"></span>
+                            </a>
+                            <a href="https://github.com/LolloMarche25/uniboquest.git" class="social-icon" aria-label="GitHub">
+                                <span class="bi bi-github" aria-hidden="true"></span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="footer-bottom border-top border-light-subtle mt-4 pt-3 d-flex justify-content-between align-items-center small">
