@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- MOBILE ---
   let current = 0;
   const btnPrev = document.querySelector("[data-manual-prev]");
   const btnNext = document.querySelector("[data-manual-next]");
