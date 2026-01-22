@@ -243,6 +243,30 @@ elseif ($isActive) $badge = 'In corso';
         <h2 class="h5 fw-bold text-white">UniBoQuest</h2>
         <p class="small text-white opacity-75">Progetto didattico – Università di Cesena.</p>
       </div>
+      <div class="col-md-3">
+        <h4 class="h6 fw-bold mb-2 text-white">Navigazione</h4>
+        <ul class="list-unstyled small mb-0">
+          <li><a href="gioco.html" class="footer-link text-white text-decoration-none">Il Gioco</a></li>
+          <li><a href="faq.html" class="footer-link text-white text-decoration-none">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h4 class="h6 fw-bold mb-2 text-white">Seguici</h4>
+        <nav class="footer-social" aria-label="Social Link">
+          <a href="#" class="social-icon" aria-label="Instagram">
+            <span class="bi bi-instagram" aria-hidden="true"></span>
+          </a>
+          <a href="#" class="social-icon" aria-label="Discord">
+            <span class="bi bi-discord" aria-hidden="true"></span>
+          </a>
+          <a href="https://github.com/LolloMarche25/uniboquest.git" class="social-icon" aria-label="GitHub">
+            <span class="bi bi-github" aria-hidden="true"></span>
+          </a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer-bottom border-top border-light-subtle mt-4 pt-3 text-center small text-secondary">
+      <span>&copy; 2026 UniBoQuest – Prototipo Alpha.</span>
     </div>
   </div>
 </footer>
