@@ -51,12 +51,16 @@
           <main class="hero-wrapper">
               <div class="os-frame">
                   <div class="hero-ubq-scene">
-                      <img src="img/hero-desk.png" alt="Desk" class="hero-ubq-img" />
+                      <picture class="hero-ubq-picture">
+                        <source srcset="img/hero-monitor-mobile.jpeg" media="(max-width: 767.98px)">
+                        <img src="img/hero-desk.png" alt="Hero UniBoQuest" class="hero-ubq-img">
+                      </picture>
                       <div class="hero-ubq-copy d-none d-md-block">
                           <h1 class="hero-ubq-title">UniBoQuest</h1>
                           <p class="hero-ubq-subtitle">Trasforma la tua carriera accademica in un'avventura epica. XP, missioni e badge ti aspettano nel campus.</p>
                       </div>
                       <div class="hero-ubq-monitor">
+                          <div class="hero-ubq-monitor-title d-md-none">UNIBOQUEST</div>
                           <a href="login.php" class="btn-os-home">ACCEDI</a>
                           <a href="registrazione.php" class="btn-os-home">REGISTRATI</a>
                       </div>
